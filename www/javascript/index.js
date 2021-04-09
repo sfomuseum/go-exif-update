@@ -14,7 +14,7 @@ let update_mod, update_inst;
 
 var pending = 2;
 
-WebAssembly.instantiateStreaming(fetch("/wasm/supported_tags.wasm"), supported_go.importObject).then(
+WebAssembly.instantiateStreaming(fetch("wasm/supported_tags.wasm"), supported_go.importObject).then(
     
     async result => {
 
@@ -30,7 +30,7 @@ WebAssembly.instantiateStreaming(fetch("/wasm/supported_tags.wasm"), supported_g
     }
 );
 
-WebAssembly.instantiateStreaming(fetch("/wasm/update_exif.wasm"), update_go.importObject).then(
+WebAssembly.instantiateStreaming(fetch("wasm/update_exif.wasm"), update_go.importObject).then(
     
     async result => {
 

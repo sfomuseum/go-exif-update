@@ -3,16 +3,37 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"github.com/aaronland/go-http-bootstrap"
 	"github.com/aaronland/go-http-server"
 	"github.com/sfomuseum/go-exif-update/www"
+	"github.com/sfomuseum/go-flags/flagset"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
 
-	server_uri := flag.String("server-uri", "http://localhost:8080", "A valid aaronland/go-http-server URI.")
+	fs := flagset.NewFlagSet("server")
+
+	server_uri := fs.String("server-uri", "http://localhost:8080", "A valid aaronland/go-http-server URI.")
+
+	bootstrap_prefix := fs.String("bootstrap-prefix", "", "A relative path to append to all Bootstrap-related paths the server will listen for requests on.")
+
+	fs.Usage = func() {
+		fmt.Fprintf(os.Stderr, "HTTP server for updating EXIF data in an image.\n")
+		fmt.Fprintf(os.Stderr, "Usage:\n\t %s [options]\n", os.Args[0])
+		fs.PrintDefaults()
+	}
+
+	flagset.Parse(fs)
+
+	err := flagset.SetFlagsFromEnvVarsWithFeedback(fs, "EXIF", true)
+
+	if err != nil {
+		log.Fatalf("Failed to set flags from environment variables, %v", err)
+	}
 
 	flag.Parse()
 
@@ -36,7 +57,7 @@ func main() {
 	fs_handler := http.FileServer(http_fs)
 
 	bootstrap_opts := bootstrap.DefaultBootstrapOptions()
-	fs_handler = bootstrap.AppendResourcesHandler(fs_handler, bootstrap_opts)
+	fs_handler = bootstrap.AppendResourcesHandlerWithPrefix(fs_handler, bootstrap_opts, *bootstrap_prefix)
 
 	mux.Handle("/", fs_handler)
 

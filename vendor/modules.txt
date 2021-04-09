@@ -45,6 +45,7 @@ github.com/golang/geo/s1
 github.com/golang/geo/s2
 # github.com/sfomuseum/go-flags v0.8.2
 ## explicit
+github.com/sfomuseum/go-flags/flagset
 github.com/sfomuseum/go-flags/multi
 # github.com/whosonfirst/algnhsa v0.1.0
 github.com/whosonfirst/algnhsa

@@ -7,13 +7,22 @@ import (
 	"sync"
 )
 
+// tags_data.yaml has been cloned from:
+// https://raw.githubusercontent.com/dsoprea/go-exif/de2141190595193aa097a2bf3205ba0cf76dc14b/tags_data.go
+
 //go:embed tags_data.yaml
 var tags_data []byte
 
+// sync.Once instance for loading YAML-encoded tag data.
 var tags_init sync.Once
+
+// tags_suppported is a private list of tag names supported by this package. This is used in conjunction with the tags_init sync.Once instance.
 var tags_supported []string
 
+// A list of exifcommon.TagTypePrimitive instances for tags that are not supported yet by this package.
 var UnsupportedTypes []exifcommon.TagTypePrimitive
+
+// A list of string for EXIF tag types that are not supported yet by this package.
 var UnsupportedTypesString []string
 
 func init() {
@@ -40,6 +49,7 @@ func init() {
 	UnsupportedTypesString = unsupported_str
 }
 
+// encodedTag is a struct for holding YAML-encoded EXIF tags. This is cribbed from here because it's a private type:
 // https://github.com/dsoprea/go-exif/blob/de2141190595193aa097a2bf3205ba0cf76dc14b/tags.go#L189
 type encodedTag struct {
 	// id is signed, here, because YAML doesn't have enough information to
@@ -49,6 +59,7 @@ type encodedTag struct {
 	TypeName string `yaml:"type_name"`
 }
 
+// Determine whether a string tag name is included in the list of supported tags in this package.
 func IsSupported(t string) (bool, error) {
 
 	supported, err := SupportedTags()
@@ -67,6 +78,7 @@ func IsSupported(t string) (bool, error) {
 	return false, nil
 }
 
+// Return a list of tag names that are supported by this package.
 func SupportedTags() ([]string, error) {
 
 	var tags_err error
