@@ -11,3 +11,13 @@ cli:
 
 debug:
 	go run -mod vendor cmd/update-exif-server/main.go
+
+lambda:
+	@make lambda-server
+
+lambda-server:
+	if test -f main; then rm -f main; fi
+	if test -f server.zip; then rm -f server.zip; fi
+	GOOS=linux go build -mod vendor -o main cmd/update-exif-server/main.go
+	zip server.zip main
+	rm -f main
