@@ -13,13 +13,60 @@ let mod, inst;
 WebAssembly.instantiateStreaming(fetch("/wasm/update_exif.wasm"), go.importObject).then(
     
     async result => {
-	document.getElementById("button").innerText = "Update";
-	document.getElementById("button").removeAttribute("disabled");
+
+	var update_button = document.getElementById("update");
+	var add_button = document.getElementById("add");    
+
+	update_button.innerText = "Update";
+	update_button.removeAttribute("disabled");
+	update_button.onclick = update;
+
+	add_button.innerText = "Add Property";	
+	add_button.removeAttribute("disabled");
+	add_button.onclick = add_property;
+	
         mod = result.module;
         inst = result.instance;
 	await go.run(inst);
     }
 );
+
+async function add_property(){
+
+    var props = document.getElementsByClassName("exif-property");
+    var count = props.length;
+
+    var uid = count + 1;
+    var id = "exif-property-" + uid;
+
+    var t_id = "exif-property-tag" + uid;
+    var v_id = "exif-property-value" + uid;        
+
+    var group = document.createElement("div");
+    group.setAttribute("class", "form-group exif-property");
+    group.setAttribute("id", id);
+
+    var input_t = document.createElement("input");
+    input_t.setAttribute("type", "input");
+    input_t.setAttribute("placeholder", "A valid EXIF tag name");
+    input_t.setAttribute("id", t_id);
+
+    var input_v = document.createElement("input");
+    input_v.setAttribute("type", "input");
+    input_v.setAttribute("placeholder", "A valid EXIF tag value");
+    input_v.setAttribute("id", v_id);
+
+    group.appendChild(input_t);
+    group.appendChild(input_v);    
+    
+    var form = document.getElementById("properties-form");    
+    form.appendChild(group);
+    
+    var update_button = document.getElementById("update");
+    update_button.style.display = "block";
+    
+    return false;
+}
 
 async function update() {
 
@@ -38,16 +85,17 @@ async function update() {
     var rsp = update_exif(b64_img, enc_update);
 
     if (! rsp){
-	return;
+	return false;
     }
     
     var blob = dataURLToBlob(rsp);
 
     if (! blob){
-	return;
+	return false;
     }
     
     saveAs(blob, "example.jpg");
+    return false;
 }
 
 var dataURLToBlob = function(dataURL){

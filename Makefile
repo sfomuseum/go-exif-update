@@ -4,3 +4,6 @@ wasm:
 cli:
 	go build -mod vendor -o bin/update-exif cmd/update-exif/main.go
 	go build -mod vendor -o bin/server cmd/update-exif-server/main.go
+
+debug:
+	go run -mod vendor cmd/update-exif-server/main.go
