@@ -49,6 +49,8 @@ github.com/golang/geo v0.0.0-20200319012246-673a6f80352d h1:C/hKUcHT483btRbeGkrR
 github.com/golang/geo v0.0.0-20200319012246-673a6f80352d/go.mod h1:QZ0nwyI2jOfgRAoBvP+ab5aRr7c9x7lhGEJrKvBwjWI=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/sfomuseum/go-flags v0.8.2 h1:elSU3KWMo442d1YjXu5Y/bokxvkGV+OrgAHshHZaeIo=
+github.com/sfomuseum/go-flags v0.8.2/go.mod h1:ML3DTNbF9xnjExSdS/9FtVLjIUhRU5gm/ehzISv+t2w=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/whosonfirst/algnhsa v0.1.0 h1:8wVksKaz1qor2Y6+fiLEPEPxsEEvUQgSdtSTQLMrnlA=

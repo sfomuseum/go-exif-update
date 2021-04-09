@@ -1,43 +1,17 @@
+// package update provides methods for updating EXIF data in JPEG files.
 package update
 
 import (
-	"bufio"
-	"bytes"
-	"encoding/base64"
+	"fmt"
 	"github.com/dsoprea/go-exif/v3"
 	"github.com/dsoprea/go-jpeg-image-structure/v2"
-	_ "image"
-	_ "image/jpeg"
 	"io"
 )
 
-func UpdateExifB64(r io.Reader, wr io.Writer, exif_data map[string]interface{}) error {
-
-	img_fh := base64.NewDecoder(base64.StdEncoding, r)
-
-	var buf bytes.Buffer
-	img_wr := bufio.NewWriter(&buf)
-
-	err := UpdateExif(img_fh, img_wr, exif_data)
-
-	if err != nil {
-		return err
-	}
-
-	img_wr.Flush()
-
-	enc := base64.NewEncoder(base64.StdEncoding, wr)
-
-	_, err = enc.Write(buf.Bytes())
-
-	if err != nil {
-		return err
-	}
-
-	return enc.Close()
-}
-
-func UpdateExif(r io.Reader, wr io.Writer, exif_data map[string]interface{}) error {
+// UpdateExif updates the EXIF data encoded in r and writes that data to wr.
+// This is really nothing more than a thin wrapper around the example code in
+// dsoprea's go-jpeg-image-structure package.
+func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) error {
 
 	img_data, err := io.ReadAll(r)
 
@@ -67,12 +41,12 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_data map[string]interface{}) err
 		return err
 	}
 
-	for k, v := range exif_data {
+	for k, v := range exif_props {
 
 		err = ifdIb.SetStandardWithName(k, v) //"CameraOwnerName", "SFO Museum")
 
 		if err != nil {
-			return err
+			return fmt.Errorf("Failed to set property '%s', %v", k, err)
 		}
 	}
 

@@ -3,32 +3,44 @@ package main
 import (
 	"flag"
 	"github.com/sfomuseum/go-exif-wasm"
+	"github.com/sfomuseum/go-flags/multi"
 	"log"
 	"os"
 )
 
 func main() {
 
+	var properties multi.KeyValueString
+	flag.Var(&properties, "property", "A {TAG}={VALUE} EXIF property string. {TAG} must be a recognized EXIF tag.")
+
 	flag.Parse()
 
 	paths := flag.Args()
 
-	first := paths[0]
-	fh, err := os.Open(first)
+	exif_props := make(map[string]interface{})
 
-	if err != nil {
-		log.Fatalf("Failed to open '%s', %v", first, err)
+	for _, p := range properties {
+		k := p.Key()
+		v := p.Value().(string)
+
+		exif_props[k] = v
 	}
 
-	defer fh.Close()
+	for _, path := range paths {
 
-	exif_data := map[string]interface{}{
-		"CameraOwnerName": "SFO Museum, yo",
+		fh, err := os.Open(path)
+
+		if err != nil {
+			log.Fatalf("Failed to open '%s', %v", path, err)
+		}
+
+		defer fh.Close()
+
+		err = update.UpdateExif(fh, os.Stdout, exif_props)
+
+		if err != nil {
+			log.Fatalf("Failed to update '%s', %v", path, err)
+		}
 	}
 
-	err = update.UpdateExif(fh, os.Stdout, exif_data)
-
-	if err != nil {
-		log.Fatal(err)
-	}
 }
