@@ -1,0 +1,21 @@
+<html>
+  <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>EXIF Updater</title>
+      <script src="javascript/wasm_exec.js"></script>
+      <script src="javascript/FileSaver.min.js"></script>      
+      <script src="javascript/index.js"></script>
+      <link rel="stylesheet" type="text/css" href="css/index.css" />
+  </head>
+
+  <body>
+      <div class="container">
+	  <div>
+	      <img src="images/walrus.jpg" id="image" />
+	  </div>
+	  
+	  <button id="button" onclick="update(); return false;" disabled>Loading</button>
+      </div>
+  </body>
+</html>
