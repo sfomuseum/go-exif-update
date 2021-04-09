@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"github.com/sfomuseum/go-exif-wasm"
+	"github.com/sfomuseum/go-exif-update"
 	"github.com/sfomuseum/go-flags/multi"
 	"log"
 	"os"

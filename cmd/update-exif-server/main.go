@@ -5,7 +5,7 @@ import (
 	"flag"
 	"github.com/aaronland/go-http-bootstrap"
 	"github.com/aaronland/go-http-server"
-	"github.com/sfomuseum/go-exif-wasm/www"
+	"github.com/sfomuseum/go-exif-update/www"
 	"log"
 	"net/http"
 )

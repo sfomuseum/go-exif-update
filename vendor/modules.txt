@@ -16,8 +16,6 @@ github.com/aws/aws-lambda-go/lambda
 github.com/aws/aws-lambda-go/lambda/handlertrace
 github.com/aws/aws-lambda-go/lambda/messages
 github.com/aws/aws-lambda-go/lambdacontext
-# github.com/dsoprea/go-exif v0.0.0-20210131231135-d154f10435cc
-## explicit
 # github.com/dsoprea/go-exif/v3 v3.0.0-20210131231135-d154f10435cc
 ## explicit
 github.com/dsoprea/go-exif/v3
@@ -32,8 +30,6 @@ github.com/dsoprea/go-jpeg-image-structure/v2
 github.com/dsoprea/go-logging
 # github.com/dsoprea/go-photoshop-info-format v0.0.0-20200609050348-3db9b63b202c
 github.com/dsoprea/go-photoshop-info-format
-# github.com/dsoprea/go-png-image-structure/v2 v2.0.0-20200807080309-a98d4e94ac82
-## explicit
 # github.com/dsoprea/go-utility/v2 v2.0.0-20200717064901-2fccff4aa15e
 github.com/dsoprea/go-utility/v2/filesystem
 github.com/dsoprea/go-utility/v2/image
