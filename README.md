@@ -36,6 +36,8 @@ func main() {
 
 ```
 
+_Error handling removed for the sake of brevity._
+
 ## Tools
 
 ```
@@ -57,6 +59,21 @@ GOOS=js GOARCH=wasm go build -mod vendor -o www/wasm/supported_tags.wasm cmd/tag
 ```
 
 ### tags-is-supported
+
+Command-line tool for indicating whether a named EXIF tag is supported by the sfomuseum/go-exif-update package.
+
+```
+$> ./bin/tags-is-supported -h
+Command-line tool for indicating whether a named EXIF tag is supported by the sfomuseum/go-exif-update package.
+
+Usage:
+	./bin/tags-is-supported tag(N) tag(N) tag(N)
+```
+
+For example:
+
+```
+```
 
 ### tags-supported
 
