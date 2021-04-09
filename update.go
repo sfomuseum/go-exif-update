@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"github.com/dsoprea/go-exif/v3"
 	"github.com/dsoprea/go-jpeg-image-structure/v2"
+	_ "image"
+	_ "image/jpeg"
 	"io"
 )
 
