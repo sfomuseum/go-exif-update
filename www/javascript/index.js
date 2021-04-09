@@ -36,14 +36,15 @@ async function add_property(){
     var props = document.getElementsByClassName("exif-property");
     var count = props.length;
 
-    var uid = count + 1;
-    var id = "exif-property-" + uid;
+    var idx = count + 1;
+    var id = "exif-property-" + idx;
 
-    var t_id = "exif-property-tag" + uid;
-    var v_id = "exif-property-value" + uid;        
+    var t_id = "exif-property-tag" + idx;
+    var v_id = "exif-property-value" + idx;        
 
     var group = document.createElement("div");
     group.setAttribute("class", "form-group exif-property");
+    group.setAttribute("data-index", idx);    
     group.setAttribute("id", id);
 
     var input_t = document.createElement("input");
@@ -70,6 +71,56 @@ async function add_property(){
 
 async function update() {
 
+    var props = document.getElementsByClassName("exif-property");
+    var count = props.length;
+
+    if (count == 0){
+	return false;
+    }
+
+    var update = {};
+    var has_updates = false;
+    
+    for (var i=0; i < count; i++){
+
+	var el = props[i];
+	var idx = el.getAttribute("data-index");
+
+	var t_id = "exif-property-tag" + idx;
+	var v_id = "exif-property-value" + idx;
+
+	var t_el = document.getElementById(t_id);
+	var v_el = document.getElementById(v_id);	
+
+	var t = t_el.value;
+	var v = v_el.value;
+
+	if (t == ""){
+	    continue;
+	}
+
+	if (v == ""){
+	    continue;
+	}
+
+	update[t] = v;
+	has_updates = true;
+    }
+
+    if (! has_updates){
+	return false;
+    }
+
+    console.log(update);    
+    var enc_update;
+    
+    try {
+	enc_update = JSON.stringify(update);
+    } catch(e){
+	console.log("Failed to marhsal update", update, e);
+	return false;
+    }
+    
     var img = document.getElementById("image");
     
     var canvas = document.createElement("canvas");
@@ -78,9 +129,6 @@ async function update() {
     var ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
     var b64_img = canvas.toDataURL("image/jpeg", 1.0);
-
-    var update = { "CameraOwnerName": "Bob" };
-    var enc_update = JSON.stringify(update);
     
     var rsp = update_exif(b64_img, enc_update);
 
