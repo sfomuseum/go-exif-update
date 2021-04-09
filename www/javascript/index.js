@@ -6,13 +6,47 @@ if (! WebAssembly.instantiateStreaming){
     };
 }
 
-const go = new Go();
+const supported_go = new Go();
+const update_go = new Go();
 
-let mod, inst;
+let supported_mod, supported_inst;
+let update_mod, update_inst;
 
-WebAssembly.instantiateStreaming(fetch("/wasm/update_exif.wasm"), go.importObject).then(
+var pending = 2;
+
+WebAssembly.instantiateStreaming(fetch("/wasm/supported_tags.wasm"), supported_go.importObject).then(
     
     async result => {
+
+	pending -= 1;
+
+	if (pending == 0){
+	    enable();
+	}
+		
+        supported_mod = result.module;
+        supported_inst = result.instance;
+	await supported_go.run(supported_inst);
+    }
+);
+
+WebAssembly.instantiateStreaming(fetch("/wasm/update_exif.wasm"), update_go.importObject).then(
+    
+    async result => {
+
+	pending -= 1;
+
+	if (pending == 0){
+	    enable();
+	}
+	
+        update_mod = result.module;
+        update_inst = result.instance;
+	await update_go.run(update_inst);
+    }
+);
+
+async function enable() {
 
 	var update_button = document.getElementById("update");
 	var add_button = document.getElementById("add");    
@@ -24,14 +58,23 @@ WebAssembly.instantiateStreaming(fetch("/wasm/update_exif.wasm"), go.importObjec
 	add_button.innerText = "Add Property";	
 	add_button.removeAttribute("disabled");
 	add_button.onclick = add_property;
-	
-        mod = result.module;
-        inst = result.instance;
-	await go.run(inst);
-    }
-);
+}
 
 async function add_property(){
+
+    var enc_supported = supported_tags();
+
+    if (! enc_supported) {
+	console.log("Failed to determine supported tags");
+	return false;
+    }
+
+    try {
+	supported = JSON.parse(enc_supported);
+    } catch(e){
+	console.log("Failed to unmarshal supported tags", e);
+	return false;
+    }
 
     var props = document.getElementsByClassName("exif-property");
     var count = props.length;
@@ -47,17 +90,24 @@ async function add_property(){
     group.setAttribute("data-index", idx);    
     group.setAttribute("id", id);
 
-    var input_t = document.createElement("input");
-    input_t.setAttribute("type", "input");
-    input_t.setAttribute("placeholder", "A valid EXIF tag name");
-    input_t.setAttribute("id", t_id);
+    var select_t = document.createElement("select");
+    select_t.setAttribute("id", t_id);
 
+    for (var i in supported) {
+
+	var tag = supported[i];
+	
+	var option = document.createElement("option");
+	option.appendChild(document.createTextNode(tag));
+	select_t.appendChild(option);
+    }
+    
     var input_v = document.createElement("input");
     input_v.setAttribute("type", "input");
     input_v.setAttribute("placeholder", "A valid EXIF tag value");
     input_v.setAttribute("id", v_id);
 
-    group.appendChild(input_t);
+    group.appendChild(select_t);
     group.appendChild(input_v);    
     
     var form = document.getElementById("properties-form");    

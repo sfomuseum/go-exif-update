@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/sfomuseum/go-exif-update/tags"
 	"log"
+	"sort"
 	"syscall/js"
 )
 
@@ -19,6 +20,8 @@ func main() {
 			log.Printf("Failed to derive supported tags, %v", err)
 			return nil
 		}
+
+		sort.Strings(tags_supported)
 
 		enc_supported, err := json.Marshal(tags_supported)
 
