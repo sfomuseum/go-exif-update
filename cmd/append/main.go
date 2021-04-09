@@ -1,48 +1,84 @@
 package main
 
 import (
-	"bufio"
+	_ "bufio"
 	"bytes"
-	"encoding/json"
-	"image"
+	"encoding/base64"
+	"flag"
+	"fmt"
+	"github.com/dsoprea/go-exif/v3"
+	"github.com/dsoprea/go-exif/v3/common"
+	"github.com/dsoprea/go-png-image-structure/v2"
+	_ "image"
 	_ "image/jpeg"
 	_ "image/png"
+	"io"
 	"log"
-	"syscall/js"
+	"os"
 )
 
-var append_func js.Func
+func append(fh io.Reader) (string, error) {
 
-func main() {
+	img_fh := base64.NewDecoder(base64.StdEncoding, fh)
 
-	append_func = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	img_data, err := io.ReadAll(img_fh)
 
-		if len(args) != 1 {
-			log.Println("Invalid arguments")
-			return nil
-		}
+	if err != nil {
+		return "", err
+	}
 
-		b64_img := args[0].String()
-		enc_props := args[1].String()
+	// Create EXIF
 
-		// decode the images
+	im, err := exifcommon.NewIfdMappingWithStandard()
 
-		r := base64.NewDecoder(base64.StdEncoding, strings.NewReader(b64_img))
+	if err != nil {
+		return "", err
+	}
+
+	ti := exif.NewTagIndex()
+
+	ib := exif.NewIfdBuilder(im, ti, exifcommon.IfdStandardIfdIdentity, exifcommon.TestDefaultByteOrder)
+
+	err = ib.AddStandardWithName("ImageWidth", []uint32{11})
+
+	if err != nil {
+		return "", err
+	}
+
+	// Update PNG file
+
+	pmp := pngstructure.NewPngMediaParser()
+
+	intfc, err := pmp.ParseBytes(img_data)
+
+	if err != nil {
+		return "", err
+	}
+
+	cs := intfc.(*pngstructure.ChunkSlice)
+
+	err = cs.SetExif(ib)
+
+	if err != nil {
+		return "", err
+	}
+
+	b := new(bytes.Buffer)
+	err = cs.WriteTo(b)
+
+	if err != nil {
+		return "", err
+	}
+
+	return "", nil
+
+	/*
+		r := base64.NewDecoder(base64.StdEncoding, fh)
 
 		im, _, err := image.Decode(r)
 
 		if err != nil {
-			return nil
-		}
-
-		// decode the properties to append
-
-		var props map[string]interface{}
-
-		err := json.Unmarshal([]byte(enc_props), &props)
-
-		if err != nil {
-			return nil
+			return "", err
 		}
 
 		// https://pkg.go.dev/github.com/dsoprea/go-png-image-structure/v2?utm_source=godoc#example-ChunkSlice.SetExif
@@ -54,20 +90,35 @@ func main() {
 		err = jpeg.Encode(wr, im, &opts)
 
 		if err != nil {
-			return nil
+			return "", err
 		}
 
 		// err = png.Encode(wr, im)
 
-		return base64.StdEncoding.EncodeToString(buf.Bytes())
-	})
+		return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
+	*/
+}
 
-	defer parse_func.Release()
+func main() {
 
-	js.Global().Set("append_exif", append_func)
+	flag.Parse()
 
-	c := make(chan struct{}, 0)
+	paths := flag.Args()
 
-	log.Println("WASM EXIF appender initialized")
-	<-c
+	first := paths[0]
+	fh, err := os.Open(first)
+
+	if err != nil {
+		log.Fatalf("Failed to open '%s', %v", first, err)
+	}
+
+	defer fh.Close()
+
+	new, err := append(fh)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(new)
 }

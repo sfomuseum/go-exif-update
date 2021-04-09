@@ -1,0 +1,27 @@
+# github.com/dsoprea/go-exif v0.0.0-20210131231135-d154f10435cc
+## explicit
+# github.com/dsoprea/go-exif/v3 v3.0.0-20210131231135-d154f10435cc
+## explicit
+github.com/dsoprea/go-exif/v3
+github.com/dsoprea/go-exif/v3/common
+github.com/dsoprea/go-exif/v3/undefined
+# github.com/dsoprea/go-logging v0.0.0-20200517223158-a10564966e9d
+github.com/dsoprea/go-logging
+# github.com/dsoprea/go-png-image-structure/v2 v2.0.0-20200807080309-a98d4e94ac82
+## explicit
+github.com/dsoprea/go-png-image-structure/v2
+# github.com/dsoprea/go-utility/v2 v2.0.0-20200717064901-2fccff4aa15e
+github.com/dsoprea/go-utility/v2/filesystem
+github.com/dsoprea/go-utility/v2/image
+# github.com/go-errors/errors v1.1.1
+github.com/go-errors/errors
+# github.com/golang/geo v0.0.0-20200319012246-673a6f80352d
+github.com/golang/geo/r1
+github.com/golang/geo/r2
+github.com/golang/geo/r3
+github.com/golang/geo/s1
+github.com/golang/geo/s2
+# golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2
+golang.org/x/net/context
+# gopkg.in/yaml.v2 v2.3.0
+gopkg.in/yaml.v2
