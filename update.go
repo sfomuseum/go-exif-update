@@ -6,8 +6,9 @@ import (
 	"github.com/dsoprea/go-exif/v3"
 	"github.com/dsoprea/go-exif/v3/common"
 	"github.com/dsoprea/go-jpeg-image-structure/v2"
+	"github.com/sfomuseum/go-exif-update/tags"
 	"io"
-	"log"
+	_ "log"
 )
 
 // UpdateExif updates the EXIF data encoded in r and writes that data to wr.
@@ -35,16 +36,6 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) er
 		return err
 	}
 
-	/*
-		ifdPath := exifcommon.Ifd1StandardIfdIdentity
-
-		ifdIb, err := exif.GetOrCreateIbFromRootIb(rootIb, ifdPath.Name())
-
-		if err != nil {
-			return err
-		}
-	*/
-
 	// https://github.com/dsoprea/go-exif/blob/de2141190595193aa097a2bf3205ba0cf76dc14b/tags_data.go
 
 	paths := []*exifcommon.IfdIdentity{
@@ -59,6 +50,18 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) er
 
 	for k, v := range exif_props {
 
+		ok, err := tags.IsSupported(k)
+
+		if err != nil {
+			return err
+		}
+
+		if !ok {
+			return fmt.Errorf("Tag '%s' is not supported at this time", k)
+		}
+
+		is_set := false
+
 		for _, p := range paths {
 
 			_, err := ti.GetWithName(p, k)
@@ -67,27 +70,20 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) er
 				continue
 			}
 
-			err = setExifTag(rootIb, p.UnindexedString(), k, v.(string))
+			err = setExifTag(rootIb, p.UnindexedString(), k, v)
 
 			if err != nil {
-				return nil
+				return err
 			}
 
-			log.Println("SET", p, k, v, err)
+			is_set = true
+			break
+		}
+
+		if !is_set {
+			return fmt.Errorf("Unable to assign tag '%s': Unrecognized or unsupported", k)
 		}
 	}
-
-	/*
-		for k, v := range exif_props {
-
-
-			err = ifdIb.SetStandardWithName(k, v) //"CameraOwnerName", "SFO Museum")
-
-			if err != nil {
-				return fmt.Errorf("Failed to set property '%s', %v", k, err)
-			}
-		}
-	*/
 
 	// Update the exif segment.
 
@@ -100,10 +96,11 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) er
 	return sl.Write(wr)
 }
 
-func setExifTag(rootIB *exif.IfdBuilder, ifdPath, tagName, tagValue string) error {
+// Cribbed from https://github.com/dsoprea/go-exif/issues/11
 
-	fmt.Printf("setTag(): ifdPath: %v, tagName: %v, tagValue: %v",
-		ifdPath, tagName, tagValue)
+func setExifTag(rootIB *exif.IfdBuilder, ifdPath string, tagName string, tagValue interface{}) error {
+
+	// log.Printf("setTag(): ifdPath: %v, tagName: %v, tagValue: %v", ifdPath, tagName, tagValue)
 
 	ifdIb, err := exif.GetOrCreateIbFromRootIb(rootIB, ifdPath)
 

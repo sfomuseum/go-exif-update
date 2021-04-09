@@ -1,5 +1,9 @@
+tag-data:
+	curl -o tags/tags_data.go https://raw.githubusercontent.com/dsoprea/go-exif/de2141190595193aa097a2bf3205ba0cf76dc14b/tags_data.go
+
 wasm:
 	GOOS=js GOARCH=wasm go build -mod vendor -o www/wasm/update_exif.wasm cmd/update-exif-wasm/main.go
+	GOOS=js GOARCH=wasm go build -mod vendor -o www/wasm/supported_tags.wasm cmd/tags-supported-wasm/main.go
 
 cli:
 	go build -mod vendor -o bin/update-exif cmd/update-exif/main.go

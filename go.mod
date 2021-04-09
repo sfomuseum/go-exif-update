@@ -8,4 +8,5 @@ require (
 	github.com/dsoprea/go-exif/v3 v3.0.0-20210131231135-d154f10435cc
 	github.com/dsoprea/go-jpeg-image-structure/v2 v2.0.0-20210128210355-86b1014917f2
 	github.com/sfomuseum/go-flags v0.8.2
+	gopkg.in/yaml.v2 v2.3.0
 )
