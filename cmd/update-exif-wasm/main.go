@@ -42,6 +42,7 @@ func main() {
 		//
 
 		if !b64_pat.MatchString(b64_data) {
+			log.Println("Base64 image data failed match")
 			return nil
 		}
 
@@ -57,6 +58,7 @@ func main() {
 		err := json.Unmarshal([]byte(enc_props), &exif_data)
 
 		if err != nil {
+			log.Printf("Failed to unmarshal properties, %v", err)
 			return nil
 		}
 
@@ -74,6 +76,7 @@ func main() {
 			im, _, err := image.Decode(tmp_fh)
 
 			if err != nil {
+				log.Printf("Failed to decode image data, %v", err)
 				return nil
 			}
 
@@ -83,6 +86,7 @@ func main() {
 			err = jpeg.Encode(jpg_wr, im, &opts)
 
 			if err != nil {
+				log.Printf("Failed to decode image data as JPEG, %v", err)
 				return err
 			}
 
@@ -95,6 +99,7 @@ func main() {
 		err = update.UpdateExif(img_fh, img_wr, exif_data)
 
 		if err != nil {
+			log.Printf("Failed update EXIF properties, %v", err)
 			return err
 		}
 

@@ -4,8 +4,10 @@ package update
 import (
 	"fmt"
 	"github.com/dsoprea/go-exif/v3"
+	"github.com/dsoprea/go-exif/v3/common"
 	"github.com/dsoprea/go-jpeg-image-structure/v2"
 	"io"
+	"log"
 )
 
 // UpdateExif updates the EXIF data encoded in r and writes that data to wr.
@@ -33,22 +35,59 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) er
 		return err
 	}
 
-	ifdPath := "IFD/Exif"
+	/*
+		ifdPath := exifcommon.Ifd1StandardIfdIdentity
 
-	ifdIb, err := exif.GetOrCreateIbFromRootIb(rootIb, ifdPath)
+		ifdIb, err := exif.GetOrCreateIbFromRootIb(rootIb, ifdPath.Name())
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
+	*/
+
+	// https://github.com/dsoprea/go-exif/blob/de2141190595193aa097a2bf3205ba0cf76dc14b/tags_data.go
+
+	paths := []*exifcommon.IfdIdentity{
+		exifcommon.IfdStandardIfdIdentity,
+		exifcommon.IfdExifStandardIfdIdentity,
+		exifcommon.IfdExifIopStandardIfdIdentity,
+		exifcommon.IfdGpsInfoStandardIfdIdentity,
+		exifcommon.Ifd1StandardIfdIdentity,
 	}
+
+	ti := exif.NewTagIndex()
 
 	for k, v := range exif_props {
 
-		err = ifdIb.SetStandardWithName(k, v) //"CameraOwnerName", "SFO Museum")
+		for _, p := range paths {
 
-		if err != nil {
-			return fmt.Errorf("Failed to set property '%s', %v", k, err)
+			_, err := ti.GetWithName(p, k)
+
+			if err != nil {
+				continue
+			}
+
+			err = setExifTag(rootIb, p.UnindexedString(), k, v.(string))
+
+			if err != nil {
+				return nil
+			}
+
+			log.Println("SET", p, k, v, err)
 		}
 	}
+
+	/*
+		for k, v := range exif_props {
+
+
+			err = ifdIb.SetStandardWithName(k, v) //"CameraOwnerName", "SFO Museum")
+
+			if err != nil {
+				return fmt.Errorf("Failed to set property '%s', %v", k, err)
+			}
+		}
+	*/
 
 	// Update the exif segment.
 
@@ -59,32 +98,24 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) er
 	}
 
 	return sl.Write(wr)
+}
 
-	/*
+func setExifTag(rootIB *exif.IfdBuilder, ifdPath, tagName, tagValue string) error {
 
-		d := buf.Bytes()
+	fmt.Printf("setTag(): ifdPath: %v, tagName: %v, tagValue: %v",
+		ifdPath, tagName, tagValue)
 
-		intfc, err = jmp.ParseBytes(d)
+	ifdIb, err := exif.GetOrCreateIbFromRootIb(rootIB, ifdPath)
 
-		if err != nil {
-			return nil, err
-		}
+	if err != nil {
+		return fmt.Errorf("Failed to get or create IB for %s: %v", ifdPath, err)
+	}
 
-		sl = intfc.(*jpegstructure.SegmentList)
+	err = ifdIb.SetStandardWithName(tagName, tagValue)
 
-		_, _, exifTags, err := sl.DumpExif()
+	if err != nil {
+		return fmt.Errorf("failed to set %s tag: %v", tagName, err)
+	}
 
-		if err != nil {
-			return nil, err
-		}
-
-		for _, et := range exifTags {
-			if et.IfdPath == "IFD/Exif" && et.TagName == "CameraOwnerName" {
-				fmt.Printf("Value: [%s]\n", et.FormattedFirst)
-				break
-			}
-		}
-
-		return nil, nil
-	*/
+	return nil
 }

@@ -10,3 +10,4 @@ This is a thin wrapper around the example code in dsoprea's [go-jpeg-image-struc
 
 * https://github.com/dsoprea/go-exif
 * https://github.com/dsoprea/go-jpeg-image-structure
+* https://exiftool.org/TagNames/EXIF.html
