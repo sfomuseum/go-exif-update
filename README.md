@@ -160,9 +160,11 @@ You should see something like this:
 
 _It's early days so this web application lacks any kind of polish._
 
-Once the image has been uploaded it will trigger a download prompt (using eligrey's [FileSaver.js](https://github.com/eligrey/FileSaver.js). PNG and GIF images will be re-encoded as JPEG images dynamically. 
+Once the image has been uploaded it will trigger a download prompt (using eligrey's [FileSaver.js](https://github.com/eligrey/FileSaver.js). PNG and GIF images will be re-encoded as JPEG images dynamically.
 
-And abbreviated version of the code to use the `update_exif.wasm` binary in JavaScript looks like this:
+![](docs/images/update-exif-wasm-demo-save.png)
+
+An abbreviated version of the code to use the `update_exif.wasm` binary in JavaScript looks like this:
 
 ```
     var update = { "Artist": "Bob" };	
