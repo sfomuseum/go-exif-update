@@ -1,7 +1,7 @@
 package tags
 
 import (
-	"fmt"
+	_ "fmt"
 	"testing"
 )
 
@@ -13,7 +13,15 @@ func TestSupportedTags(t *testing.T) {
 		t.Fatalf("Failed to determine supported tags, %v", err)
 	}
 
-	fmt.Println(len(supported))
+	// go run -mod vendor cmd/tags-supported/main.go | wc -l
+	expected_count := 86
+
+	supported_count := len(supported)
+
+	if supported_count != expected_count {
+		t.Fatalf("Unexpected count for supported tags. Expected %d, but got %d", expected_count, supported_count)
+	}
+
 }
 
 func TestIsSupported(t *testing.T) {

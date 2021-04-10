@@ -1,13 +1,23 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/sfomuseum/go-exif-update/tags"
 	"log"
+	"os"
 	"sort"
 )
 
 func main() {
+
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Command-line tool that prints a list of EXIF tag names, sorted alphabetically, that are supported by the sfomuseum/go-exif-update package.\n\n")
+		fmt.Fprintf(os.Stderr, "Usage:\n\t%s\n", os.Args[0])
+		flag.PrintDefaults()
+	}
+
+	flag.Parse()
 
 	tags, err := tags.SupportedTags()
 

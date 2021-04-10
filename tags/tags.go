@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"github.com/dsoprea/go-exif/v3/common"
 	"gopkg.in/yaml.v2"
+	_ "log"
 	"sync"
 )
 
@@ -100,14 +101,19 @@ func SupportedTags() ([]string, error) {
 
 			for _, t := range ifdtags {
 
+				include := true
+
 				for _, ts := range UnsupportedTypesString {
 
 					if t.TypeName == ts {
-						continue
+						include = false
+						break
 					}
 				}
 
-				tags_supported = append(tags_supported, t.Name)
+				if include {
+					tags_supported = append(tags_supported, t.Name)
+				}
 			}
 		}
 	}

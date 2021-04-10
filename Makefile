@@ -10,7 +10,7 @@ cli:
 	go build -mod vendor -o bin/tags-is-supported cmd/tags-is-supported/main.go
 	go build -mod vendor -o bin/tags-supported cmd/tags-supported/main.go
 	go build -mod vendor -o bin/update-exif cmd/update-exif/main.go
-	go build -mod vendor -o bin/server cmd/update-exif-server/main.go
+	go build -mod vendor -o bin/update-exif-wasm-demo cmd/update-exif-wasm-demo/main.go
 
 debug:
 	go run -mod vendor cmd/update-exif-server/main.go
