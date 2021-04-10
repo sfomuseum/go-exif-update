@@ -178,12 +178,14 @@ And abbreviated version of the code to use the `update_exif.wasm` binary in Java
     var b64_img = canvas.toDataURL("image/jpeg", 1.0);
     
     var rsp = update_exif(b64_img, enc_update);
-    var blob = dataURLToBlob(rsp);
     
+    var blob = dataURLToBlob(rsp);
     saveAs(blob, "example.jpg");
 ```
 
 For a complete example consult the [www/javascript/index.js](www/javascript/index.js) file.
+
+As of this writing neither wasm binary will return any kind of useful error information if a problem is encountered. Error reporting will be logged (to the browser's console log) but in the event of an error the response value for both wasm binaries will be `null`. This is not ideal and will be addressed in future releases.
 
 ## See also
 
