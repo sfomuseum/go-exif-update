@@ -4,13 +4,17 @@ Go package to for updating EXIF data in JPEG files.
 
 This is a thin wrapper around the dsoprea's [go-exif](https://github.com/dsoprea/go-exif) and [go-jpeg-image-structure](https://github.com/dsoprea/go-jpeg-image-structure) packages and includes command-line tools for updating the EXIF data JPEG files using key-value parameters as well as a WebAssembly (wasm) binary for updating EXIF data in JavaScript (or other languages that support wasm binaries).
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/sfomuseum/go-exif-update.svg)](https://pkg.go.dev/github.com/sfomuseum/go-exif-update)
+The blog post [Updating EXIF metadata in JavaScript (and WebAssembly)](https://millsfield.sfomuseum.org/blog/2021/04/14/exif/) includes an example of the WebAssembly binary in action.
 
 ## Important
 
 As of this writing the majority of EXIF tags are _not_ supported. Currently only EXIF tags of types `ASCII` and `BYTE` are supported. This is not ideal but I am still trying to get familiar with the requirements of the `go-exif` package. Contributions and patches for the other remaining EXIF tag types is welcomed.
 
-## Example
+## Documentation
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/sfomuseum/go-exif-update.svg)](https://pkg.go.dev/github.com/sfomuseum/go-exif-update)
+
+### Example
 
 ```
 package main
