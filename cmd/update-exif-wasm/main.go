@@ -80,38 +80,41 @@ func UpdateFunc() js.Func {
 					img_fh = base64.NewDecoder(base64.StdEncoding, b64_fh)
 				} else {
 
-				log.Println("STEP", "4a")
+					log.Println("STEP", "4a")
 					tmp_fh := base64.NewDecoder(base64.StdEncoding, b64_fh)
 
-				log.Println("STEP", "4b")
+					log.Println("STEP", "4b")
 					im, _, err := image.Decode(tmp_fh)
 
-				log.Println("STEP", "4c")
+					log.Println("STEP", "4c")
 					if err != nil {
 						log.Println("SAD", 3)
 						reject.Invoke(fmt.Sprintf("Failed to decode image data, %v", err))
 						return
 					}
 
-				log.Println("STEP", "4d")
-					jpg_r, jpg_wr := io.Pipe()
+					var buf bytes.Buffer
+					jpg_wr := bufio.NewWriter(&buf)
+
+					log.Println("STEP", "4d")
+					// 	jpg_r, jpg_wr := io.Pipe()
 
 					// Gets this far and then stops - guessing that pipes don't
 					// play happy inside callbacks?
 
-				log.Println("STEP", "4e")
+					log.Println("STEP", "4e")
 					opts := jpeg.Options{Quality: 100}
 					err = jpeg.Encode(jpg_wr, im, &opts)
 
-				log.Println("STEP", "4f")
+					log.Println("STEP", "4f")
 					if err != nil {
 						log.Println("SAD", 4)
 						reject.Invoke(fmt.Sprintf("Failed to decode image data as JPEG, %v", err))
 						return
 					}
 
-				log.Println("STEP", "4g")
-					img_fh = jpg_r
+					log.Println("STEP", "4g")
+					img_fh = bytes.NewReader(buf.Bytes())
 				}
 
 				log.Println("STEP", 5)
