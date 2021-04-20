@@ -179,20 +179,21 @@ async function update() {
     var ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
     var b64_img = canvas.toDataURL("image/jpeg", 1.0);
-    
-    var rsp = update_exif(b64_img, enc_update);
 
-    if (! rsp){
-	return false;
-    }
-    
-    var blob = dataURLToBlob(rsp);
+    update_exif(b64_img, enc_update).then(data => {
 
-    if (! blob){
-	return false;
-    }
-    
-    saveAs(blob, "example.jpg");
+	var blob = dataURLToBlob(data);
+
+	if (! blob){
+	    return false;
+	}
+	
+	saveAs(blob, "example.jpg");
+	
+    }).catch(err => {
+	console.log("Failed to update EXIF data", err);
+    });
+
     return false;
 }
 

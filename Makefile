@@ -13,7 +13,7 @@ cli:
 	go build -mod vendor -o bin/update-exif-wasm-demo cmd/update-exif-wasm-demo/main.go
 
 debug:
-	go run -mod vendor cmd/update-exif-server/main.go
+	go run -mod vendor cmd/update-exif-wasm-demo/main.go
 
 lambda:
 	@make lambda-server
