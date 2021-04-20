@@ -161,7 +161,6 @@ async function update() {
 	return false;
     }
 
-    console.log(update);    
     var enc_update;
     
     try {
@@ -198,9 +197,11 @@ async function update() {
 }
 
 var dataURLToBlob = function(dataURL){
+
     var BASE64_MARKER = ";base64,";
-    if (dataURL.indexOf(BASE64_MARKER) == -1)
-    {
+
+    if (dataURL.indexOf(BASE64_MARKER) == -1){
+
         var parts = dataURL.split(",");
         var contentType = parts[0].split(":")[1];
         var raw = decodeURIComponent(parts[1]);

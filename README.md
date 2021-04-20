@@ -183,10 +183,16 @@ An abbreviated version of the code to use the `update_exif.wasm` binary in JavaS
     ctx.drawImage(img, 0, 0);
     var b64_img = canvas.toDataURL("image/jpeg", 1.0);
     
-    var rsp = update_exif(b64_img, enc_update);
+    update_exif(b64_img, enc_update).then(data_url => {
+
+        var blob = dataURLToBlob(data_url);
+    	saveAs(blob, "example.jpg");
+
+    ).catch(err => {
+
+    	console.log("Failed to update EXIF data, ", err);
+    });
     
-    var blob = dataURLToBlob(rsp);
-    saveAs(blob, "example.jpg");
 ```
 
 For a complete example consult the [www/javascript/index.js](www/javascript/index.js) file.
