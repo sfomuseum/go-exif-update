@@ -34,6 +34,27 @@ func TestPrepareDecimalGPSLatitudeTag(t *testing.T) {
 
 }
 
+func TestPrepareDecimalGPSLatitudeRefTag(t *testing.T) {
+
+	tests := map[string]float64{
+		"N": 37.61799,
+		"S": -45.788,
+	}
+
+	for ref, lat := range tests {
+
+		rsp, err := PrepareDecimalGPSLatitudeRefTag(lat)
+
+		if err != nil {
+			t.Fatalf("Failed to prepare GPSLatitudeRefTag %f, %v", lat, err)
+		}
+
+		if rsp != ref {
+			t.Fatalf("Invalid ref, expected '%s' but got '%s'", ref, rsp)
+		}
+	}
+}
+
 func TestPrepareDecimalGPSLongitudeTag(t *testing.T) {
 
 	ref := "W"
@@ -61,4 +82,25 @@ func TestPrepareDecimalGPSLongitudeTag(t *testing.T) {
 		t.Fatalf("Failed to convert longitude")
 	}
 
+}
+
+func TestPrepareDecimalGPSLongitudeRefTag(t *testing.T) {
+
+	tests := map[string]float64{
+		"E": 37.61799,
+		"W": -122.384864,
+	}
+
+	for ref, lon := range tests {
+
+		rsp, err := PrepareDecimalGPSLongitudeRefTag(lon)
+
+		if err != nil {
+			t.Fatalf("Failed to prepare GPSLongitudeRefTag %f, %v", lon, err)
+		}
+
+		if rsp != ref {
+			t.Fatalf("Invalid ref, expected '%s' but got '%s'", ref, rsp)
+		}
+	}
 }

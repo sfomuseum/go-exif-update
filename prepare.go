@@ -8,17 +8,8 @@ import (
 	"math"
 )
 
-// Cribbed from https://github.com/go-spatial/geom/blob/0e06498b336286332f6742fb898fb7118ede4005/planar/coord/coord.go
-
-// Convert the given lng or lat value to the degree minute seconds values
-func toDMS(v float64) (d int64, m int64, s float64) {
-	var frac float64
-	df, frac := math.Modf(v)
-	mf, frac := math.Modf(60.0 * frac)
-	s = 60.0 * frac
-	return int64(math.Abs(df)), int64(math.Abs(mf)), math.Abs(s)
-}
-
+// Translate a decimal latitude value into a list of exifcommon.Rational instances
+// (which in turn are an  an exifcommon.EncodedData instance)
 func PrepareDecimalGPSLatitudeTag(lat float64) (interface{}, error) {
 
 	var orientation string
@@ -41,6 +32,21 @@ func PrepareDecimalGPSLatitudeTag(lat float64) (interface{}, error) {
 	return exif_gps.Raw(), nil
 }
 
+func PrepareDecimalGPSLatitudeRefTag(lat float64) (interface{}, error) {
+
+	var orientation string
+
+	if lat > 0 {
+		orientation = "N"
+	} else {
+		orientation = "S"
+	}
+
+	return orientation, nil
+}
+
+// Translate a decimal longitude value into a list of exifcommon.Rational instances
+// (which in turn are an  an exifcommon.EncodedData instance)
 func PrepareDecimalGPSLongitudeTag(lon float64) (interface{}, error) {
 
 	var orientation string
@@ -61,6 +67,19 @@ func PrepareDecimalGPSLongitudeTag(lon float64) (interface{}, error) {
 	}
 
 	return exif_gps.Raw(), nil
+}
+
+func PrepareDecimalGPSLongitudeRefTag(lon float64) (interface{}, error) {
+
+	var orientation string
+
+	if lon > 0 {
+		orientation = "E"
+	} else {
+		orientation = "W"
+	}
+
+	return orientation, nil
 }
 
 // PrepareTag attempts to translate and prepare an EXIF tag value into an exifcommon.EncodedData
@@ -98,4 +117,15 @@ func PrepareTag(k string, v string) (interface{}, error) {
 	}
 
 	return nil, fmt.Errorf("Unsupported type(s).")
+}
+
+// Cribbed from https://github.com/go-spatial/geom/blob/0e06498b336286332f6742fb898fb7118ede4005/planar/coord/coord.go
+
+// Convert the given lng or lat value to the degree minute seconds values
+func toDMS(v float64) (d int64, m int64, s float64) {
+	var frac float64
+	df, frac := math.Modf(v)
+	mf, frac := math.Modf(60.0 * frac)
+	s = 60.0 * frac
+	return int64(math.Abs(df)), int64(math.Abs(mf)), math.Abs(s)
 }
