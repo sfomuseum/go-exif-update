@@ -8,12 +8,16 @@ import (
 	"github.com/sfomuseum/go-flags/multi"
 	"log"
 	"os"
+	"strings"
 )
 
 func main() {
 
 	var properties multi.KeyValueString
 	flag.Var(&properties, "property", "One or more {TAG}={VALUE} EXIF properties. {TAG} must be a recognized EXIF tag.")
+
+	lat := flag.Float64("latitude", 0.0, "")
+	lon := flag.Float64("longitude", 0.0, "")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Command-line tool for updating the EXIF properties in one or more JPEG images. Images are not updated in place but written to STDOUT.\n\n")
@@ -32,17 +36,29 @@ func main() {
 		k := p.Key()
 		v := p.Value().(string)
 
-		ok, err := tags.IsSupported(k)
+		if !strings.HasPrefix(k, "X-") {
 
-		if err != nil {
-			log.Fatalf("Failed to determine whether tag '%s' is supported, %v", k, err)
-		}
+			ok, err := tags.IsSupported(k)
 
-		if !ok {
-			log.Fatalf("Tag '%s' is not supported by this tool, at this time", k)
+			if err != nil {
+				log.Fatalf("Failed to determine whether tag '%s' is supported, %v", k, err)
+			}
+
+			if !ok {
+				log.Fatalf("Tag '%s' is not supported by this tool, at this time", k)
+			}
 		}
 
 		exif_props[k] = v
+	}
+
+	if *lat != 0.0 && *lon != 0.0 {
+
+		err := update.AppendGPSPropertiesWithLatitudeAndLongitude(exif_props, *lat, *lon)
+
+		if err != nil {
+			log.Fatalf("Failed to append latitude and longitude properties, %v", err)
+		}
 	}
 
 	for _, path := range paths {
@@ -55,7 +71,7 @@ func main() {
 
 		defer fh.Close()
 
-		err = update.UpdateExif(fh, os.Stdout, exif_props)
+		err = update.PrepareAndUpdateExif(fh, os.Stdout, exif_props)
 
 		if err != nil {
 			log.Fatalf("Failed to update '%s', %v", path, err)

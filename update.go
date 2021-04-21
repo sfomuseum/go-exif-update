@@ -9,6 +9,7 @@ import (
 	"github.com/sfomuseum/go-exif-update/tags"
 	"io"
 	_ "log"
+	"strconv"
 )
 
 var ti *exif.TagIndex
@@ -31,9 +32,94 @@ func init() {
 
 }
 
-// UpdateExif updates the EXIF data encoded in r and writes that data to wr.
+// PrepareAndUpdateExif attempts to prepare and translate EXIF properties in defined in exif_props
+// in to their appropriate dsoprea/go-exif types and format and then updates the EXIF data encoded in
+// r and writes that data to wr. This method also supports a handful of custom properties that are
+// prefixed with X- and used to populate known EXIF properties. These are:
+// * X-Latitude and X-Longitude, which convert and assign decimal latitude and longitude coordinates
+//   in to their GPSLatitude/Longitude and GPSLatitude/LongitudeRef EXIF properties.
+func PrepareAndUpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) error {
+
+	prepared := make(map[string]interface{})
+
+	var lat float64
+	var lon float64
+
+	x_lat, has_lat := exif_props["X-Latitude"]
+	x_lon, has_lon := exif_props["X-Longitude"]
+
+	if has_lat && !has_lon {
+		return fmt.Errorf("Missing X-Longitude property (X-Latitude is set)")
+	}
+
+	if has_lon && !has_lat {
+		return fmt.Errorf("Missing X-Latitude property (X-Longitude is set)")
+	}
+
+	if has_lat && has_lon {
+
+		switch x_lat.(type) {
+		case float64:
+			lat = x_lat.(float64)
+		case string:
+
+			l, err := strconv.ParseFloat(x_lat.(string), 64)
+
+			if err != nil {
+				return err
+			}
+
+			lat = l
+		default:
+			return fmt.Errorf("Invalid type for latitude, %T", lat)
+		}
+
+		switch x_lon.(type) {
+		case float64:
+			lon = x_lon.(float64)
+		case string:
+
+			l, err := strconv.ParseFloat(x_lon.(string), 64)
+
+			if err != nil {
+				return err
+			}
+
+			lon = l
+
+		default:
+			return fmt.Errorf("Invalid type for longitude")
+		}
+
+		err := AppendGPSPropertiesWithLatitudeAndLongitude(prepared, lat, lon)
+
+		if err != nil {
+			return err
+		}
+
+		delete(exif_props, "X-Latitude")
+		delete(exif_props, "X-Longitude")
+	}
+
+	for k, v := range exif_props {
+
+		str_v := fmt.Sprintf("%v", v)
+		v2, err := PrepareTag(k, str_v)
+
+		if err != nil {
+			return fmt.Errorf("Failed to prepare tag '%s', %v", k, err)
+		}
+
+		prepared[k] = v2
+	}
+
+	return UpdateExif(r, wr, prepared)
+}
+
 // This is really nothing more than a thin wrapper around the example code in
 // dsoprea's go-jpeg-image-structure package.
+
+// UpdateExif updates the EXIF data encoded in r and writes that data to wr.
 func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) error {
 
 	img_data, err := io.ReadAll(r)

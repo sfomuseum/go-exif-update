@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/dsoprea/go-exif/v3"
 	"github.com/dsoprea/go-exif/v3/common"
-	"log"
+	_ "log"
 	"math"
 )
 
@@ -99,8 +99,6 @@ func PrepareTag(k string, v string) (interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-
-		log.Println("WTF", k, v, v2)
 
 		// https://github.com/dsoprea/go-exif/blob/db167117f4830a268022c953f0f521fcc83d031e/v3/common/value_encoder.go#L225
 

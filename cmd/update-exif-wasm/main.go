@@ -100,7 +100,7 @@ func UpdateFunc() js.Func {
 				var buf bytes.Buffer
 				img_wr := bufio.NewWriter(&buf)
 
-				err = update.UpdateExif(img_fh, img_wr, exif_data)
+				err = update.PrepareAndUpdateExif(img_fh, img_wr, exif_data)
 
 				if err != nil {
 					reject.Invoke(fmt.Printf("Failed update EXIF properties, %v", err))
