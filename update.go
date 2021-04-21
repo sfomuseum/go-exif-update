@@ -8,8 +8,26 @@ import (
 	"github.com/dsoprea/go-jpeg-image-structure/v2"
 	"github.com/sfomuseum/go-exif-update/tags"
 	"io"
-	_ "log"
+	"log"
 )
+
+var ti *exif.TagIndex
+
+var tag_paths []*exifcommon.IfdIdentity
+
+func init() {
+
+	ti = exif.NewTagIndex()
+
+	tag_paths = []*exifcommon.IfdIdentity{
+		exifcommon.IfdStandardIfdIdentity,
+		exifcommon.IfdExifStandardIfdIdentity,
+		exifcommon.IfdExifIopStandardIfdIdentity,
+		exifcommon.IfdGpsInfoStandardIfdIdentity,
+		exifcommon.Ifd1StandardIfdIdentity,
+	}
+
+}
 
 // UpdateExif updates the EXIF data encoded in r and writes that data to wr.
 // This is really nothing more than a thin wrapper around the example code in
@@ -38,15 +56,17 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) er
 
 	// https://github.com/dsoprea/go-exif/blob/de2141190595193aa097a2bf3205ba0cf76dc14b/tags_data.go
 
-	paths := []*exifcommon.IfdIdentity{
-		exifcommon.IfdStandardIfdIdentity,
-		exifcommon.IfdExifStandardIfdIdentity,
-		exifcommon.IfdExifIopStandardIfdIdentity,
-		exifcommon.IfdGpsInfoStandardIfdIdentity,
-		exifcommon.Ifd1StandardIfdIdentity,
-	}
+	/*
+		paths := []*exifcommon.IfdIdentity{
+			exifcommon.IfdStandardIfdIdentity,
+			exifcommon.IfdExifStandardIfdIdentity,
+			exifcommon.IfdExifIopStandardIfdIdentity,
+			exifcommon.IfdGpsInfoStandardIfdIdentity,
+			exifcommon.Ifd1StandardIfdIdentity,
+		}
 
-	ti := exif.NewTagIndex()
+		ti := exif.NewTagIndex()
+	*/
 
 	for k, v := range exif_props {
 
@@ -60,29 +80,20 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) er
 			return fmt.Errorf("Tag '%s' is not supported at this time", k)
 		}
 
-		is_set := false
+		id, _, err := GetIndexedTagFromName(k)
 
-		for _, p := range paths {
-
-			_, err := ti.GetWithName(p, k)
-
-			if err != nil {
-				continue
-			}
-
-			err = setExifTag(rootIb, p.UnindexedString(), k, v)
-
-			if err != nil {
-				return err
-			}
-
-			is_set = true
-			break
+		if err != nil {
+			return err
 		}
 
-		if !is_set {
-			return fmt.Errorf("Unable to assign tag '%s': Unrecognized or unsupported", k)
+		log.Println("SET", k, v)
+
+		err = setExifTag(rootIb, id.UnindexedString(), k, v)
+
+		if err != nil {
+			return err
 		}
+
 	}
 
 	// Update the exif segment.
@@ -115,4 +126,20 @@ func setExifTag(rootIB *exif.IfdBuilder, ifdPath string, tagName string, tagValu
 	}
 
 	return nil
+}
+
+func GetIndexedTagFromName(k string) (*exifcommon.IfdIdentity, *exif.IndexedTag, error) {
+
+	for _, id := range tag_paths {
+
+		t, err := ti.GetWithName(id, k)
+
+		if err != nil {
+			continue
+		}
+
+		return id, t, nil
+	}
+
+	return nil, nil, fmt.Errorf("Unrecognized tag, %s", k)
 }
