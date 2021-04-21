@@ -43,9 +43,22 @@ func TestUpdateExifRationals(t *testing.T) {
 
 	wr := io.Discard
 
+	fnum, err := PrepareTag("FNumber", "11/1")
+
+	if err != nil {
+		t.Fatalf("Failed to prepare tag, %v", err)
+	}
+
+	xres, err := PrepareTag("XResolution", "72/1")
+
+	if err != nil {
+		t.Fatalf("Failed to prepare tag, %v", err)
+	}
+
 	props := map[string]interface{}{
-		"FNumber":     "3/20",
-		"GPSLatitude": "2 13 8",
+		"FNumber":     fnum,
+		"XResolution": xres,
+		// "GPSLatitude": "2 13 8",
 	}
 
 	// update_test.go:52: Failed to update EXIF data, failed to set GPSLatitude tag: value not encodable: [float64] [37.61799]

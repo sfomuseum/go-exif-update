@@ -19,6 +19,8 @@ func init() {
 
 	ti = exif.NewTagIndex()
 
+	// https://github.com/dsoprea/go-exif/blob/de2141190595193aa097a2bf3205ba0cf76dc14b/tags_data.go
+
 	tag_paths = []*exifcommon.IfdIdentity{
 		exifcommon.IfdStandardIfdIdentity,
 		exifcommon.IfdExifStandardIfdIdentity,
@@ -53,20 +55,6 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) er
 	if err != nil {
 		return err
 	}
-
-	// https://github.com/dsoprea/go-exif/blob/de2141190595193aa097a2bf3205ba0cf76dc14b/tags_data.go
-
-	/*
-		paths := []*exifcommon.IfdIdentity{
-			exifcommon.IfdStandardIfdIdentity,
-			exifcommon.IfdExifStandardIfdIdentity,
-			exifcommon.IfdExifIopStandardIfdIdentity,
-			exifcommon.IfdGpsInfoStandardIfdIdentity,
-			exifcommon.Ifd1StandardIfdIdentity,
-		}
-
-		ti := exif.NewTagIndex()
-	*/
 
 	for k, v := range exif_props {
 
@@ -128,6 +116,8 @@ func setExifTag(rootIB *exif.IfdBuilder, ifdPath string, tagName string, tagValu
 	return nil
 }
 
+// Return the *exifcommon.IfdIdentity and *exif.IndexedTag instances associated
+// with a given EXIF string tag name.
 func GetIndexedTagFromName(k string) (*exifcommon.IfdIdentity, *exif.IndexedTag, error) {
 
 	for _, id := range tag_paths {
