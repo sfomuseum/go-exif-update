@@ -8,7 +8,7 @@ import (
 	"github.com/dsoprea/go-jpeg-image-structure/v2"
 	"github.com/sfomuseum/go-exif-update/tags"
 	"io"
-	"log"
+	_ "log"
 )
 
 var ti *exif.TagIndex
@@ -73,8 +73,6 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) er
 		if err != nil {
 			return err
 		}
-
-		log.Println("SET", k, v)
 
 		err = setExifTag(rootIb, id.UnindexedString(), k, v)
 
