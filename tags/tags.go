@@ -33,8 +33,8 @@ func init() {
 	// (20210409/thisisaaronland)
 
 	UnsupportedTypes = []exifcommon.TagTypePrimitive{
-		exifcommon.TypeRational,
-		exifcommon.TypeSignedRational,
+		// exifcommon.TypeRational,
+		// exifcommon.TypeSignedRational,
 		exifcommon.TypeShort,
 		exifcommon.TypeLong,
 		exifcommon.TypeSignedLong,
