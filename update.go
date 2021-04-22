@@ -179,6 +179,24 @@ func UpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) er
 	return sl.Write(wr)
 }
 
+// Return the *exifcommon.IfdIdentity and *exif.IndexedTag instances associated
+// with a given EXIF string tag name.
+func GetIndexedTagFromName(k string) (*exifcommon.IfdIdentity, *exif.IndexedTag, error) {
+
+	for _, id := range tag_paths {
+
+		t, err := ti.GetWithName(id, k)
+
+		if err != nil {
+			continue
+		}
+
+		return id, t, nil
+	}
+
+	return nil, nil, fmt.Errorf("Unrecognized tag, %s", k)
+}
+
 // Cribbed from https://github.com/dsoprea/go-exif/issues/11
 
 func setExifTag(rootIB *exif.IfdBuilder, ifdPath string, tagName string, tagValue interface{}) error {
@@ -198,22 +216,4 @@ func setExifTag(rootIB *exif.IfdBuilder, ifdPath string, tagName string, tagValu
 	}
 
 	return nil
-}
-
-// Return the *exifcommon.IfdIdentity and *exif.IndexedTag instances associated
-// with a given EXIF string tag name.
-func GetIndexedTagFromName(k string) (*exifcommon.IfdIdentity, *exif.IndexedTag, error) {
-
-	for _, id := range tag_paths {
-
-		t, err := ti.GetWithName(id, k)
-
-		if err != nil {
-			continue
-		}
-
-		return id, t, nil
-	}
-
-	return nil, nil, fmt.Errorf("Unrecognized tag, %s", k)
 }

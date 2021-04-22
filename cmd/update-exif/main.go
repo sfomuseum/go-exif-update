@@ -16,9 +16,6 @@ func main() {
 	var properties multi.KeyValueString
 	flag.Var(&properties, "property", "One or more {TAG}={VALUE} EXIF properties. {TAG} must be a recognized EXIF tag.")
 
-	lat := flag.Float64("latitude", 0.0, "")
-	lon := flag.Float64("longitude", 0.0, "")
-
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Command-line tool for updating the EXIF properties in one or more JPEG images. Images are not updated in place but written to STDOUT.\n\n")
 		fmt.Fprintf(os.Stderr, "Usage:\n\t%s [options] image(N) image(N) image(N)\n\n", os.Args[0])
@@ -50,15 +47,6 @@ func main() {
 		}
 
 		exif_props[k] = v
-	}
-
-	if *lat != 0.0 && *lon != 0.0 {
-
-		err := update.AppendGPSPropertiesWithLatitudeAndLongitude(exif_props, *lat, *lon)
-
-		if err != nil {
-			log.Fatalf("Failed to append latitude and longitude properties, %v", err)
-		}
 	}
 
 	for _, path := range paths {

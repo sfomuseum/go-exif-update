@@ -20,7 +20,7 @@ func main() {
 			log.Printf("Failed to derive supported tags, %v", err)
 			return nil
 		}
-		
+
 		sort.Strings(tags_supported)
 
 		x_tags := []string{
@@ -31,7 +31,7 @@ func main() {
 		for _, t := range x_tags {
 			tags_supported = append(tags_supported, t)
 		}
-		
+
 		enc_supported, err := json.Marshal(tags_supported)
 
 		if err != nil {
