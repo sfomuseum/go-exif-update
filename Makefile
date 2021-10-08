@@ -1,9 +1,18 @@
+GOROOT=$(shell go env GOROOT)
+
 tag-data:
 	curl -o tags/tags_data.go 
+
+rebuild-wasm:
+	@make wasmjs
+	@make wasm
 
 wasm:
 	GOOS=js GOARCH=wasm go build -mod vendor -o www/wasm/update_exif.wasm cmd/update-exif-wasm/main.go
 	GOOS=js GOARCH=wasm go build -mod vendor -o www/wasm/supported_tags.wasm cmd/tags-supported-wasm/main.go
+
+wasmjs:
+	cp "$(GOROOT)/misc/wasm/wasm_exec.js" www/javascript/
 
 cli:
 	@make wasm

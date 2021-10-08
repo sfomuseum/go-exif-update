@@ -1,11 +1,10 @@
-# github.com/aaronland/go-http-bootstrap v0.0.10
+# github.com/aaronland/go-http-bootstrap v0.1.0
 ## explicit
 github.com/aaronland/go-http-bootstrap
-github.com/aaronland/go-http-bootstrap/resources
 github.com/aaronland/go-http-bootstrap/static
 # github.com/aaronland/go-http-rewrite v0.0.6
 github.com/aaronland/go-http-rewrite
-# github.com/aaronland/go-http-server v0.0.6
+# github.com/aaronland/go-http-server v0.0.7
 ## explicit
 github.com/aaronland/go-http-server
 # github.com/aaronland/go-roster v0.0.2
@@ -16,14 +15,14 @@ github.com/aws/aws-lambda-go/lambda
 github.com/aws/aws-lambda-go/lambda/handlertrace
 github.com/aws/aws-lambda-go/lambda/messages
 github.com/aws/aws-lambda-go/lambdacontext
-# github.com/dsoprea/go-exif/v3 v3.0.0-20210131231135-d154f10435cc
+# github.com/dsoprea/go-exif/v3 v3.0.0-20210625224831-a6301f85c82b
 ## explicit
 github.com/dsoprea/go-exif/v3
 github.com/dsoprea/go-exif/v3/common
 github.com/dsoprea/go-exif/v3/undefined
 # github.com/dsoprea/go-iptc v0.0.0-20200609062250-162ae6b44feb
 github.com/dsoprea/go-iptc
-# github.com/dsoprea/go-jpeg-image-structure/v2 v2.0.0-20210128210355-86b1014917f2
+# github.com/dsoprea/go-jpeg-image-structure/v2 v2.0.0-20210512043942-b434301c6836
 ## explicit
 github.com/dsoprea/go-jpeg-image-structure/v2
 # github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd
@@ -49,10 +48,10 @@ github.com/sfomuseum/go-flags/flagset
 github.com/sfomuseum/go-flags/multi
 # github.com/whosonfirst/algnhsa v0.1.0
 github.com/whosonfirst/algnhsa
-# golang.org/x/net v0.0.0-20210316092652-d523dce5a7f4
+# golang.org/x/net v0.0.0-20201002202402-0a1ea396d57c
 golang.org/x/net/context
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# gopkg.in/yaml.v2 v2.3.0
+# gopkg.in/yaml.v2 v2.4.0
 ## explicit
 gopkg.in/yaml.v2
