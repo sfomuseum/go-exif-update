@@ -232,6 +232,15 @@ func NewShapeIndexIterator(index *ShapeIndex, pos ...ShapeIndexIteratorPos) *Sha
 	return s
 }
 
+func (s *ShapeIndexIterator) clone() *ShapeIndexIterator {
+	return &ShapeIndexIterator{
+		index:    s.index,
+		position: s.position,
+		id:       s.id,
+		cell:     s.cell,
+	}
+}
+
 // CellID returns the CellID of the current index cell.
 // If s.Done() is true, a value larger than any valid CellID is returned.
 func (s *ShapeIndexIterator) CellID() CellID {
@@ -758,6 +767,16 @@ func (s *ShapeIndex) Remove(shape Shape) {
 
 	s.pendingRemovals = append(s.pendingRemovals, removed)
 	atomic.StoreInt32(&s.status, stale)
+}
+
+// Build triggers the update of the index. Calls to Add and Release are normally
+// queued and processed on the first subsequent query. This has many advantages,
+// the most important of which is that sometimes there *is* no subsequent
+// query, which lets us avoid building the index completely.
+//
+// This method forces any pending updates to be applied immediately.
+func (s *ShapeIndex) Build() {
+	s.maybeApplyUpdates()
 }
 
 // IsFresh reports if there are no pending updates that need to be applied.

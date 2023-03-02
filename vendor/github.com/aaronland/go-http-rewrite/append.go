@@ -9,13 +9,20 @@ import (
 	"net/http"
 )
 
+// AppendResourcesOptions is a struct containing configuration options for the `AppendResourcesHandler` method.
 type AppendResourcesOptions struct {
-	JavaScript     []string
-	Stylesheets    []string
+	// A list of JavaScript URIs to append to an HTML document's `<head>` element as `<script>` tags.
+	JavaScript []string
+	// A list of CSS URIs to append to an HTML document's `<head>` element as `<link rel="stylesheet">` tags.
+	Stylesheets []string
+	// A dictionary of key and value pairs to append to an HTML document's <body> element as `data-{KEY}="{VALUE}` attributes.
 	DataAttributes map[string]string
 }
 
-func AppendResourcesHandler(next http.Handler, opts *AppendResourcesOptions) http.Handler {
+// AppendResourcesHandler() creates a `RewriteHTMLFunc` callback function, configured by 'opts', and uses that
+// callback function and 'previous_handler' to invoke the `RewriteHTMLHandler` function. All of this will cause
+// the output of 'previous_handler' to be rewritten to append headers and data attributes defined in 'opts'.
+func AppendResourcesHandler(previous_handler http.Handler, opts *AppendResourcesOptions) http.Handler {
 
 	var cb RewriteHTMLFunc
 
@@ -74,5 +81,5 @@ func AppendResourcesHandler(next http.Handler, opts *AppendResourcesOptions) htt
 		}
 	}
 
-	return RewriteHTMLHandler(next, cb)
+	return RewriteHTMLHandler(previous_handler, cb)
 }

@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/sfomuseum/go-exif-update"
 	"image"
 	_ "image/gif"
 	"image/jpeg"
@@ -16,6 +15,8 @@ import (
 	"regexp"
 	"strings"
 	"syscall/js"
+
+	"github.com/sfomuseum/go-exif-update"	
 )
 
 // var update_func js.Func

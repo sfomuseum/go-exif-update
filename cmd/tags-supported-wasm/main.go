@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/sfomuseum/go-exif-update/tags"
 	"log"
 	"sort"
 	"syscall/js"
+
+	"github.com/sfomuseum/go-exif-update/tags"	
 )
 
 var supported_func js.Func

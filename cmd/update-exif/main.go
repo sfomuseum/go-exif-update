@@ -3,12 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/sfomuseum/go-exif-update"
-	"github.com/sfomuseum/go-exif-update/tags"
-	"github.com/sfomuseum/go-flags/multi"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/sfomuseum/go-exif-update"
+	"github.com/sfomuseum/go-exif-update/tags"
+	"github.com/sfomuseum/go-flags/multi"	
 )
 
 func main() {

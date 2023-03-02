@@ -5,21 +5,23 @@ import (
 	"bytes"
 	"golang.org/x/net/html"
 	"io"
-	_ "log"
 	go_http "net/http"
 	go_httptest "net/http/httptest"
-	"strconv"
 	"strings"
 )
 
+// RewriteHTMLFunc is custom callback function for altering the HTML content of 'node'
 type RewriteHTMLFunc func(node *html.Node, writer io.Writer)
 
-func RewriteHTMLHandler(prev go_http.Handler, rewrite_func RewriteHTMLFunc) go_http.Handler {
+// RewriteHTMLHandler return a `net/http` middleware handle to alter the body of 'previous_handler'
+// using 'rewrite_func'. Content is only altered if and when the "Content-Type" header (returned by
+// 'previous_handler') is "text/html". If not the unaltered body is returned as-is.
+func RewriteHTMLHandler(previous_handler go_http.Handler, rewrite_func RewriteHTMLFunc) go_http.Handler {
 
 	fn := func(rsp go_http.ResponseWriter, req *go_http.Request) {
 
 		rec := go_httptest.NewRecorder()
-		prev.ServeHTTP(rec, req)
+		previous_handler.ServeHTTP(rec, req)
 
 		prev_rsp := rec.Result()
 		prev_headers := prev_rsp.Header
@@ -29,22 +31,22 @@ func RewriteHTMLHandler(prev go_http.Handler, rewrite_func RewriteHTMLFunc) go_h
 		location := prev_headers.Get("Location")
 
 		if location != "" {
-			
+
 			for k, v := range prev_headers {
 
 				if k == "Location" {
 					continue
 				}
-				
+
 				for _, vv := range v {
 					rsp.Header().Set(k, vv)
 				}
 			}
-			
+
 			go_http.Redirect(rsp, req, location, 303)
 			return
 		}
-		
+
 		content_type := prev_headers.Get("Content-Type")
 
 		if content_type != "" {
@@ -105,14 +107,10 @@ func RewriteHTMLHandler(prev go_http.Handler, rewrite_func RewriteHTMLFunc) go_h
 			rsp.Header()[k] = v
 		}
 
-		data := buf.Bytes()
-		clen := len(data)
-
-		rsp.Header().Set("Content-Length", strconv.Itoa(clen))
 		rsp.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-		rsp.WriteHeader(200)
-		rsp.Write(data)
+		rsp.WriteHeader(prev_rsp.StatusCode)
+		rsp.Write(buf.Bytes())
 	}
 
 	return go_http.HandlerFunc(fn)
