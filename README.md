@@ -395,11 +395,9 @@ ShutterSpeedValue
 ShutterSpeedValue
 Software
 SpectralSensitivity
-SpectralSensitivity
 SubSecTime
 SubSecTimeDigitized
 SubSecTimeOriginal
-SubjectDistance
 SubjectDistance
 TIFFEPStandardID
 TargetPrinter
@@ -424,3 +422,5 @@ YResolution
 * https://github.com/dsoprea/go-exif
 * https://github.com/dsoprea/go-jpeg-image-structure
 * https://exiftool.org/TagNames/EXIF.html
+* https://exiv2.org/tags.html
+* https://www.media.mit.edu/pia/Research/deepview/exif.html
