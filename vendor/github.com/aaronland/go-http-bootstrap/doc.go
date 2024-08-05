@@ -6,15 +6,15 @@
 // Example
 //
 //	package main
-//	
+//
 //	import (
 //		"github.com/aaronland/go-http-bootstrap"
 //		"log"
 //		"net/http"
 //	)
-//	
+//
 //	func Handler() http.Handler {
-//	
+//
 //		index := `
 //	<!doctype html>
 //	<html lang="en-us">
@@ -24,7 +24,7 @@
 //	    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 //	    <title>Bootstrap</title>
 //	  </head>
-//	
+//
 //	  <body>
 //	   <div class="card">
 //	   	<h1 class="card-header">Card header</h1>
@@ -33,33 +33,33 @@
 //	   </div>
 //	  </body>
 //	</html>`
-//	
+//
 //		fn := func(rsp http.ResponseWriter, req *http.Request) {
-//	
+//
 //			rsp.Write([]byte(index))
 //		}
-//	
+//
 //		return http.HandlerFunc(fn)
 //	}
-//	
+//
 //	func main() {
-//	
+//
 //		mux := http.NewServeMux()
-//		
+//
 //		idx_handler := Handler()
-//	
+//
 //		bootstrap_opts := bootstrap.DefaultBootstrapOptions()
 //		idx_handler = bootstrap.AppendResourcesHandler(idx_handler, bootstrap_opts)
-//	
+//
 //		mux.Handle("/", idx_handler)
-//	
+//
 //		bootstrap.AppendAssetHandlers(mux)
-//	
+//
 //		endpoint := "localhost:8080"
 //		log.Printf("Listening for requests on %s\n", endpoint)
-//	
+//
 //		http.ListenAndServe(endpoint, mux)
 //	}
-// 
+//
 // All of the Bootstrap files in the [static/css](static/css) and [static/javascript](static/javascript) are registered with your `http.ServeMux` instance when you call `bootstrap.AppendAssetHandlers` but by default only the `css/bootstrap.min.css` is included in the list of CSS and Javascript resources to append to HTML content when you call the `bootstrap.DefaultBootstrapOptions()` method. If there are other Bootstrap-related files you need to access in your application you will need to add them to the `BootstrapOptions.CSS` and `Bootstrap.JS` properties manually.
 package bootstrap

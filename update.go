@@ -36,8 +36,8 @@ func init() {
 // in to their appropriate dsoprea/go-exif types and format and then updates the EXIF data encoded in
 // r and writes that data to wr. This method also supports a handful of custom properties that are
 // prefixed with X- and used to populate known EXIF properties. These are:
-// * X-Latitude and X-Longitude, which convert and assign decimal latitude and longitude coordinates
-//   in to their GPSLatitude/Longitude and GPSLatitude/LongitudeRef EXIF properties.
+//   - X-Latitude and X-Longitude, which convert and assign decimal latitude and longitude coordinates
+//     in to their GPSLatitude/Longitude and GPSLatitude/LongitudeRef EXIF properties.
 func PrepareAndUpdateExif(r io.Reader, wr io.Writer, exif_props map[string]interface{}) error {
 
 	prepared := make(map[string]interface{})

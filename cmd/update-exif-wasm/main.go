@@ -16,7 +16,7 @@ import (
 	"strings"
 	"syscall/js"
 
-	"github.com/sfomuseum/go-exif-update"	
+	"github.com/sfomuseum/go-exif-update"
 )
 
 // var update_func js.Func

@@ -1,6 +1,6 @@
 # go-http-bootstrap
 
-`go-http-bootstrap` is an HTTP middleware package for including Bootstrap (v5.0.0) assets in web applications.
+`go-http-bootstrap` is an HTTP middleware package for including Bootstrap (v5.3.3) assets in web applications.
 
 ## Documentation
 

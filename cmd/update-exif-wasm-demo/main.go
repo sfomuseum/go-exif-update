@@ -12,7 +12,7 @@ import (
 	"github.com/aaronland/go-http-server"
 	"github.com/sfomuseum/go-exif-update/www"
 	"github.com/sfomuseum/go-flags/flagset"
-	"github.com/sfomuseum/go-http-wasm"		
+	"github.com/sfomuseum/go-http-wasm/v2"
 )
 
 func main() {
@@ -49,27 +49,30 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	err = bootstrap.AppendAssetHandlers(mux)
+	bootstrap_opts := bootstrap.DefaultBootstrapOptions()
+	bootstrap_opts.Prefix = *bootstrap_prefix
+
+	wasm_opts := wasm.DefaultWASMOptions()
+	
+	err = bootstrap.AppendAssetHandlers(mux, bootstrap_opts)
 
 	if err != nil {
 		log.Fatalf("Failed to append Bootstrap asset handlers, %v", err)
 	}
 
-	err = wasm.AppendAssetHandlers(mux)
+	err = wasm.AppendAssetHandlers(mux, wasm_opts)
 
 	if err != nil {
 		log.Fatalf("Failed to append WASM asset handlers, %v", err)
 	}
-	
+
 	http_fs := http.FS(www.FS)
 	fs_handler := http.FileServer(http_fs)
 
-	bootstrap_opts := bootstrap.DefaultBootstrapOptions()
-	fs_handler = bootstrap.AppendResourcesHandlerWithPrefix(fs_handler, bootstrap_opts, *bootstrap_prefix)
+	fs_handler = bootstrap.AppendResourcesHandler(fs_handler, bootstrap_opts)
 
-	wasm_opts := wasm.DefaultWASMOptions()
 	fs_handler = wasm.AppendResourcesHandler(fs_handler, wasm_opts)
-	
+
 	mux.Handle("/", fs_handler)
 
 	log.Printf("Listening on %s", s.Address())

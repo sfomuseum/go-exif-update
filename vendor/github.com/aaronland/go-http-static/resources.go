@@ -1,16 +1,17 @@
 package static
 
 import (
-	"github.com/aaronland/go-http-rewrite"
-	_ "log"
 	"net/http"
+
+	"github.com/aaronland/go-http-rewrite"
 )
 
 // ResourcesOptions provides a list of JavaScript and CSS link to include with HTML output.
 type ResourcesOptions struct {
-	JS             []string
-	CSS            []string
-	DataAttributes map[string]string
+	JS                    []string
+	CSS                   []string
+	DataAttributes        map[string]string
+	AppendJavaScriptAtEOF bool
 }
 
 // Return a *ResourcesOptions struct with default paths and URIs.
@@ -43,9 +44,10 @@ func AppendResourcesHandlerWithPrefix(next http.Handler, opts *ResourcesOptions,
 	}
 
 	ext_opts := &rewrite.AppendResourcesOptions{
-		JavaScript:     js,
-		Stylesheets:    css,
-		DataAttributes: opts.DataAttributes,
+		JavaScript:            js,
+		Stylesheets:           css,
+		DataAttributes:        opts.DataAttributes,
+		AppendJavaScriptAtEOF: opts.AppendJavaScriptAtEOF,
 	}
 
 	return rewrite.AppendResourcesHandler(next, ext_opts)

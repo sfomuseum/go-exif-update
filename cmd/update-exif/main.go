@@ -9,7 +9,7 @@ import (
 
 	"github.com/sfomuseum/go-exif-update"
 	"github.com/sfomuseum/go-exif-update/tags"
-	"github.com/sfomuseum/go-flags/multi"	
+	"github.com/sfomuseum/go-flags/multi"
 )
 
 func main() {

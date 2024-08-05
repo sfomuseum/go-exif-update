@@ -17,6 +17,9 @@ type AppendResourcesOptions struct {
 	Stylesheets []string
 	// A dictionary of key and value pairs to append to an HTML document's <body> element as `data-{KEY}="{VALUE}` attributes.
 	DataAttributes map[string]string
+	// AppendJavaScriptAtEOF is a boolean flag to append JavaScript markup at the end of an HTML document
+	// rather than in the <head> HTML element. Default is false
+	AppendJavaScriptAtEOF bool
 }
 
 // AppendResourcesHandler() creates a `RewriteHTMLFunc` callback function, configured by 'opts', and uses that
@@ -30,20 +33,8 @@ func AppendResourcesHandler(previous_handler http.Handler, opts *AppendResources
 
 		if n.Type == html.ElementNode && n.Data == "head" {
 
-			for _, js := range opts.JavaScript {
-
-				script_type := html.Attribute{"", "type", "text/javascript"}
-				script_src := html.Attribute{"", "src", js}
-
-				script := html.Node{
-					Type:      html.ElementNode,
-					DataAtom:  atom.Script,
-					Data:      "script",
-					Namespace: "",
-					Attr:      []html.Attribute{script_type, script_src},
-				}
-
-				n.AppendChild(&script)
+			if !opts.AppendJavaScriptAtEOF {
+				appendJS(n, opts)
 			}
 
 			for _, css := range opts.Stylesheets {
@@ -74,6 +65,14 @@ func AppendResourcesHandler(previous_handler http.Handler, opts *AppendResources
 				data_attr := html.Attribute{data_ns, data_key, data_value}
 				n.Attr = append(n.Attr, data_attr)
 			}
+
+		}
+
+		if n.Type == html.ElementNode && n.Data == "html" {
+
+			if opts.AppendJavaScriptAtEOF {
+				appendJS(n, opts)
+			}
 		}
 
 		for c := n.FirstChild; c != nil; c = c.NextSibling {
@@ -82,4 +81,24 @@ func AppendResourcesHandler(previous_handler http.Handler, opts *AppendResources
 	}
 
 	return RewriteHTMLHandler(previous_handler, cb)
+}
+
+func appendJS(n *html.Node, opts *AppendResourcesOptions) {
+
+	for _, js := range opts.JavaScript {
+
+		script_type := html.Attribute{"", "type", "text/javascript"}
+		script_src := html.Attribute{"", "src", js}
+
+		script := html.Node{
+			Type:      html.ElementNode,
+			DataAtom:  atom.Script,
+			Data:      "script",
+			Namespace: "",
+			Attr:      []html.Attribute{script_type, script_src},
+		}
+
+		n.AppendChild(&script)
+	}
+
 }

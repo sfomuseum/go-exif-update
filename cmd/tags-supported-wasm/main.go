@@ -6,7 +6,7 @@ import (
 	"sort"
 	"syscall/js"
 
-	"github.com/sfomuseum/go-exif-update/tags"	
+	"github.com/sfomuseum/go-exif-update/tags"
 )
 
 var supported_func js.Func

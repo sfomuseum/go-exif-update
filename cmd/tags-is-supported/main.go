@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/sfomuseum/go-exif-update/tags"	
+	"github.com/sfomuseum/go-exif-update/tags"
 )
 
 func main() {

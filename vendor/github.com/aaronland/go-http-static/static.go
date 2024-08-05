@@ -2,11 +2,12 @@ package static
 
 import (
 	"fmt"
-	"github.com/aaronland/go-http-rewrite"
 	"io/fs"
 	_ "log"
 	"net/http"
 	"strings"
+
+	"github.com/aaronland/go-http-rewrite"	
 )
 
 func StaticAssetsHandler(static_fs fs.FS) (http.Handler, error) {
@@ -53,7 +54,7 @@ func AppendStaticAssetHandlersWithPrefix(mux *http.ServeMux, static_fs fs.FS, pr
 	walk_func := func(path string, info fs.DirEntry, err error) error {
 
 		// log.Println("WALK", path)
-		
+
 		if path == "." {
 			return nil
 		}

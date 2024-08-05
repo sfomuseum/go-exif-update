@@ -2,21 +2,27 @@ package bootstrap
 
 import (
 	"fmt"
-	"github.com/aaronland/go-http-rewrite"	
-	"github.com/aaronland/go-http-bootstrap/static"
 	"io/fs"
-	_ "log"
 	"net/http"
-	"path/filepath"
+	"net/url"
 	"strings"
+
+	"github.com/aaronland/go-http-bootstrap/static"
+	aa_static "github.com/aaronland/go-http-static"
+	"github.com/sfomuseum/go-http-rollup"
 )
 
 // BootstrapOptions provides a list of JavaScript and CSS link to include with HTML output.
 type BootstrapOptions struct {
 	// A list of relative Bootstrap Javascript URLs to append as resources in HTML output.
-	JS  []string
-	// A list of relative Bootstrap CSS URLs to append as resources in HTML output.	
+	JS []string
+	// A list of relative Bootstrap CSS URLs to append as resources in HTML output.
 	CSS []string
+	// AppendJavaScriptAtEOF is a boolean flag to append JavaScript markup at the end of an HTML document
+	// rather than in the <head> HTML element. Default is false
+	AppendJavaScriptAtEOF bool
+	RollupAssets          bool
+	Prefix                string
 }
 
 // Return a *BootstrapOptions struct with default paths and URIs.
@@ -30,114 +36,180 @@ func DefaultBootstrapOptions() *BootstrapOptions {
 	return opts
 }
 
+func (opts *BootstrapOptions) EnableJavascript() {
+	opts.JS = append(opts.JS, "/javascript/bootstrap.bundle.min.js")
+}
+
 // AppendResourcesHandler will rewrite any HTML produced by previous handler to include the necessary markup to load Bootstrap JavaScript files and related assets.
 func AppendResourcesHandler(next http.Handler, opts *BootstrapOptions) http.Handler {
-	return AppendResourcesHandlerWithPrefix(next, opts, "")
-}
 
-// AppendResourcesHandlerWithPrefix will rewrite any HTML produced by previous handler to include the necessary markup to load Bootstrap JavaScript files and related assets ensuring that all URIs are prepended with a prefix.
-func AppendResourcesHandlerWithPrefix(next http.Handler, opts *BootstrapOptions, prefix string) http.Handler {
+	static_opts := aa_static.DefaultResourcesOptions()
+	static_opts.AppendJavaScriptAtEOF = opts.AppendJavaScriptAtEOF
 
-	// We're doing this the long way because otherwise there is a
-	// risk of infinite-prefixing because of copy by reference issues
-	// (20210322/straup)
+	static_opts.CSS = opts.CSS
+	static_opts.JS = opts.JS
 
-	js := make([]string, len(opts.JS))
-	css := make([]string, len(opts.CSS))
+	if opts.RollupAssets {
 
-	for idx, path := range opts.JS {
+		if len(opts.CSS) > 1 {
 
-		if prefix != "" {
-			path = appendPrefix(prefix, path)
+			static_opts.CSS = []string{
+				"/css/bootstrap.rollup.css",
+			}
 		}
 
-		js[idx] = path
-	}
+		if len(opts.JS) > 1 {
 
-	for idx, path := range opts.CSS {
-
-		if prefix != "" {
-			path = appendPrefix(prefix, path)
+			static_opts.JS = []string{
+				"/javascript/bootstrap.rollup.js",
+			}
 		}
 
-		css[idx] = path
 	}
 
-	rewrite_opts := &rewrite.AppendResourcesOptions{
-		JavaScript:  js,
-		Stylesheets: css,
-	}
-
-	return rewrite.AppendResourcesHandler(next, rewrite_opts)
-}
-
-// AssetsHandler returns a net/http FS instance containing the embedded Bootstrap assets that are included with this package.
-func AssetsHandler() (http.Handler, error) {
-
-	http_fs := http.FS(static.FS)
-	return http.FileServer(http_fs), nil
-}
-
-// AssetsHandler returns a net/http FS instance containing the embedded Bootstrap assets that are included with this package ensuring that all URLs are stripped of prefix.
-func AssetsHandlerWithPrefix(prefix string) (http.Handler, error) {
-
-	fs_handler, err := AssetsHandler()
-
-	if err != nil {
-		return nil, err
-	}
-
-	fs_handler = http.StripPrefix(prefix, fs_handler)
-	return fs_handler, nil
+	return aa_static.AppendResourcesHandlerWithPrefix(next, static_opts, opts.Prefix)
 }
 
 // Append all the files in the net/http FS instance containing the embedded Bootstrap assets to an *http.ServeMux instance.
-func AppendAssetHandlers(mux *http.ServeMux) error {
-	return AppendAssetHandlersWithPrefix(mux, "")
+func AppendAssetHandlers(mux *http.ServeMux, opts *BootstrapOptions) error {
+
+	if !opts.RollupAssets {
+		return aa_static.AppendStaticAssetHandlersWithPrefix(mux, static.FS, opts.Prefix)
+	}
+
+	js_paths := make([]string, len(opts.JS))
+	css_paths := make([]string, len(opts.CSS))
+
+	for idx, path := range opts.JS {
+		path = strings.TrimLeft(path, "/")
+		js_paths[idx] = path
+	}
+
+	for idx, path := range opts.CSS {
+		path = strings.TrimLeft(path, "/")
+		css_paths[idx] = path
+	}
+
+	switch len(js_paths) {
+	case 0:
+		// pass
+	case 1:
+		err := serveSubDir(mux, opts, "javascript")
+
+		if err != nil {
+			return fmt.Errorf("Failed to append static asset handler for javascript FS, %w", err)
+		}
+
+	default:
+
+		rollup_js_paths := map[string][]string{
+			"bootstrap.rollup.js": js_paths,
+		}
+
+		rollup_js_opts := &rollup.RollupJSHandlerOptions{
+			FS:    static.FS,
+			Paths: rollup_js_paths,
+		}
+
+		rollup_js_handler, err := rollup.RollupJSHandler(rollup_js_opts)
+
+		if err != nil {
+			return fmt.Errorf("Failed to create rollup JS handler, %w", err)
+		}
+
+		rollup_js_uri := "/javascript/bootstrap.rollup.js"
+
+		if opts.Prefix != "" {
+
+			u, err := url.JoinPath(opts.Prefix, rollup_js_uri)
+
+			if err != nil {
+				return fmt.Errorf("Failed to append prefix to %s, %w", rollup_js_uri, err)
+			}
+
+			rollup_js_uri = u
+		}
+
+		mux.Handle(rollup_js_uri, rollup_js_handler)
+	}
+
+	// CSS
+
+	switch len(css_paths) {
+	case 0:
+		// pass
+	case 1:
+
+		err := serveSubDir(mux, opts, "css")
+
+		if err != nil {
+			return fmt.Errorf("Failed to append static asset handler for css FS, %w", err)
+		}
+
+	default:
+
+		rollup_css_paths := map[string][]string{
+			"bootstrap.rollup.css": css_paths,
+		}
+
+		rollup_css_opts := &rollup.RollupCSSHandlerOptions{
+			FS:    static.FS,
+			Paths: rollup_css_paths,
+		}
+
+		rollup_css_handler, err := rollup.RollupCSSHandler(rollup_css_opts)
+
+		if err != nil {
+			return fmt.Errorf("Failed to create rollup CSS handler, %w", err)
+		}
+
+		rollup_css_uri := "/css/bootstrap.rollup.css"
+
+		if opts.Prefix != "" {
+
+			u, err := url.JoinPath(opts.Prefix, rollup_css_uri)
+
+			if err != nil {
+				return fmt.Errorf("Failed to append prefix to %s, %w", rollup_css_uri, err)
+			}
+
+			rollup_css_uri = u
+		}
+
+		mux.Handle(rollup_css_uri, rollup_css_handler)
+	}
+
+	// END OF this should eventually be made a generic function in go-http-rollup
+
+	return nil
 }
 
-// Append all the files in the net/http FS instance containing the embedded Bootstrap assets to an *http.ServeMux instance ensuring that all URLs are prepended with prefix.
-func AppendAssetHandlersWithPrefix(mux *http.ServeMux, prefix string) error {
+func serveSubDir(mux *http.ServeMux, opts *BootstrapOptions, dirname string) error {
 
-	asset_handler, err := AssetsHandlerWithPrefix(prefix)
+	sub_fs, err := fs.Sub(static.FS, dirname)
 
 	if err != nil {
-		return nil
+		return fmt.Errorf("Failed to load %s FS, %w", dirname, err)
 	}
 
-	walk_func := func(path string, info fs.DirEntry, err error) error {
+	sub_prefix := dirname
 
-		if path == "." {
-			return nil
+	if opts.Prefix != "" {
+
+		prefix, err := url.JoinPath(opts.Prefix, sub_prefix)
+
+		if err != nil {
+			return fmt.Errorf("Failed to append prefix to %s, %w", sub_prefix, err)
 		}
 
-		if info.IsDir() {
-			return nil
-		}
-
-		if prefix != "" {
-			path = appendPrefix(prefix, path)
-		}
-
-		if !strings.HasPrefix(path, "/") {
-			path = fmt.Sprintf("/%s", path)
-		}
-
-		mux.Handle(path, asset_handler)
-		return nil
+		sub_prefix = prefix
 	}
 
-	return fs.WalkDir(static.FS, ".", walk_func)
-}
+	err = aa_static.AppendStaticAssetHandlersWithPrefix(mux, sub_fs, sub_prefix)
 
-func appendPrefix(prefix string, path string) string {
-
-	prefix = strings.TrimRight(prefix, "/")
-
-	if prefix != "" {
-		path = strings.TrimLeft(path, "/")
-		path = filepath.Join(prefix, path)
+	if err != nil {
+		return fmt.Errorf("Failed to append static asset handler for %s FS, %w", dirname, err)
 	}
 
-	return path
+	return nil
 }
