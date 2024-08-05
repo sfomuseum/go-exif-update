@@ -28,5 +28,5 @@ require (
 	github.com/sfomuseum/go-http-rollup v0.0.3 // indirect
 	github.com/tdewolff/minify/v2 v2.20.32 // indirect
 	github.com/tdewolff/parse/v2 v2.7.14 // indirect
-	golang.org/x/net v0.8.0 // indirect
+	golang.org/x/net v0.23.0 // indirect
 )
