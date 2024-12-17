@@ -5,7 +5,7 @@ github.com/aaronland/go-http-bootstrap/static
 # github.com/aaronland/go-http-rewrite v1.1.0
 ## explicit; go 1.18
 github.com/aaronland/go-http-rewrite
-# github.com/aaronland/go-http-server v1.4.1
+# github.com/aaronland/go-http-server v1.5.0
 ## explicit; go 1.22
 github.com/aaronland/go-http-server
 # github.com/aaronland/go-http-static v0.0.3
@@ -17,7 +17,7 @@ github.com/aaronland/go-roster
 # github.com/akrylysov/algnhsa v1.1.0
 ## explicit; go 1.18
 github.com/akrylysov/algnhsa
-# github.com/aws/aws-lambda-go v1.46.0
+# github.com/aws/aws-lambda-go v1.47.0
 ## explicit; go 1.18
 github.com/aws/aws-lambda-go/events
 github.com/aws/aws-lambda-go/lambda
@@ -81,8 +81,8 @@ github.com/tdewolff/parse/v2/buffer
 github.com/tdewolff/parse/v2/css
 github.com/tdewolff/parse/v2/js
 github.com/tdewolff/parse/v2/strconv
-# golang.org/x/net v0.23.0
-## explicit; go 1.18
+# golang.org/x/net v0.8.0
+## explicit; go 1.17
 golang.org/x/net/context
 golang.org/x/net/html
 golang.org/x/net/html/atom
