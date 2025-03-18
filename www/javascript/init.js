@@ -12,57 +12,6 @@ sfomuseum.golang.wasm.fetch("wasm/supported_tags.wasm").then((rsp) => {
 }).catch((err) => {
     console.error("Failed to load supported tags", err);
 });
-
-/*
-if (! WebAssembly.instantiateStreaming){
-	 
-    WebAssembly.instantiateStreaming = async (resp, importObject) => {
-        const source = await (await resp).arrayBuffer();
-        return await WebAssembly.instantiate(source, importObject);
-    };
-}
-
-const supported_go = new Go();
-const update_go = new Go();
-
-let supported_mod, supported_inst;
-let update_mod, update_inst;
-
-var pending = 2;
-
-WebAssembly.instantiateStreaming(fetch("wasm/supported_tags.wasm"), supported_go.importObject).then(
-    
-    async result => {
-
-	pending -= 1;
-
-	if (pending == 0){
-	    enable();
-	}
-		
-        supported_mod = result.module;
-        supported_inst = result.instance;
-	await supported_go.run(supported_inst);
-    }
-);
-
-WebAssembly.instantiateStreaming(fetch("wasm/update_exif.wasm"), update_go.importObject).then(
-    
-    async result => {
-
-	pending -= 1;
-
-	if (pending == 0){
-	    enable();
-	}
-	
-        update_mod = result.module;
-        update_inst = result.instance;
-	await update_go.run(update_inst);
-    }
-);
-
-    */
     
 async function enable() {
 
