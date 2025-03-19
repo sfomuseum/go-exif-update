@@ -87,6 +87,8 @@ go build -mod vendor -o bin/update-exif cmd/update-exif/main.go
 go build -mod vendor -o bin/server cmd/update-exif-server/main.go
 ```
 
+### WebAssembly (WASM) binaries
+
 As part of the build process for tools the two WebAssembly (wasm) binaries that are used by the `update-exif-server` tool are compiled and placee. You can also build the wasm binaries separately using the `wasm` Makefile target:
 
 ```
