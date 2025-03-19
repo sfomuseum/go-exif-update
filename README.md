@@ -250,7 +250,7 @@ An abbreviated version of the code to use the `update_exif.wasm` binary in JavaS
     
 ```
 
-For a complete example consult the [www/javascript/index.js](www/javascript/index.js) file.
+For a complete example (which uses the [sfomuseum/js-sfomuseum-golang-wasm](https://github.com/sfomuseum/js-sfomuseum-golang-wasm) helper library) consult the [www/javascript/init.js](www/javascript/init.js) file.
 
 The WASM binary included with tool uses the `PrepareAndUpdateExif` method and supports non-standard tags, both described above.
 
@@ -427,3 +427,4 @@ YResolution
 * https://exiftool.org/TagNames/EXIF.html
 * https://exiv2.org/tags.html
 * https://www.media.mit.edu/pia/Research/deepview/exif.html
+* https://github.com/sfomuseum/js-sfomuseum-golang-wasm
