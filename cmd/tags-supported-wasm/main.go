@@ -1,3 +1,4 @@
+//go:build wasmjs
 package main
 
 import (
