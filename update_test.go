@@ -18,7 +18,7 @@ func TestUpdateExifStrings(t *testing.T) {
 
 	wr := io.Discard
 
-	props := map[string]interface{}{
+	props := map[string]any{
 		"Artist": "Bob",
 	}
 
@@ -55,7 +55,7 @@ func TestUpdateExifRationals(t *testing.T) {
 		t.Fatalf("Failed to prepare tag, %v", err)
 	}
 
-	props := map[string]interface{}{
+	props := map[string]any{
 		"FNumber":     fnum,
 		"XResolution": xres,
 	}
@@ -110,7 +110,7 @@ func TestUpdateExifGPS(t *testing.T) {
 		t.Fatalf("Failed to prepare GPSLatitudeRefTag, %v", err)
 	}
 
-	props := map[string]interface{}{
+	props := map[string]any{
 		"GPSLatitude":     gps_lat,
 		"GPSLatitudeRef":  gps_lat_ref,
 		"GPSLongitude":    gps_lon,

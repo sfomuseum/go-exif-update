@@ -9,7 +9,7 @@ func TestAppendGPSPropertiesWithLatitudeAndLongitude(t *testing.T) {
 	lat := 37.61799
 	lon := -122.384864
 
-	props := make(map[string]interface{})
+	props := make(map[string]any)
 
 	err := AppendGPSPropertiesWithLatitudeAndLongitude(props, lat, lon)
 

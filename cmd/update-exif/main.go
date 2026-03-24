@@ -27,7 +27,7 @@ func main() {
 
 	paths := flag.Args()
 
-	exif_props := make(map[string]interface{})
+	exif_props := make(map[string]any)
 
 	for _, p := range properties {
 
