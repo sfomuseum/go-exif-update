@@ -14,7 +14,7 @@ func TestSupportedTags(t *testing.T) {
 	}
 
 	// go run -mod vendor cmd/tags-supported/main.go | wc -l
-	expected_count := 86
+	expected_count := 161
 
 	supported_count := len(supported)
 
@@ -30,11 +30,11 @@ func TestIsSupported(t *testing.T) {
 		"Artist",
 		"Make",
 		"SubSecTimeOriginal",
+		"SubjectDistance",
 	}
 
 	unsupported := []string{
 		"FlashpixVersion",
-		"SubjectDistance",
 		"ImageWidth",
 	}
 
