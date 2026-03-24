@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/aaronland/go-http/v3/server"
+	"github.com/aaronland/go-http/v4/server"
 	"github.com/sfomuseum/go-exif-update/www"
 	"github.com/sfomuseum/go-flags/flagset"
 )
