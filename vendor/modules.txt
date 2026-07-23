@@ -52,7 +52,7 @@ github.com/golang/geo/s2
 ## explicit; go 1.22
 github.com/sfomuseum/go-flags/flagset
 github.com/sfomuseum/go-flags/multi
-# golang.org/x/net v0.51.0
+# golang.org/x/net v0.55.0
 ## explicit; go 1.25.0
 golang.org/x/net/context
 # gopkg.in/yaml.v2 v2.4.0
