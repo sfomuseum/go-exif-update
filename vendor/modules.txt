@@ -1,4 +1,4 @@
-# github.com/aaronland/go-http/v4 v4.0.2
+# github.com/aaronland/go-http/v4 v4.0.4
 ## explicit; go 1.25.0
 github.com/aaronland/go-http/v4/server
 # github.com/aaronland/go-roster v1.0.0
@@ -7,7 +7,7 @@ github.com/aaronland/go-roster
 # github.com/akrylysov/algnhsa v1.1.0
 ## explicit; go 1.18
 github.com/akrylysov/algnhsa
-# github.com/aws/aws-lambda-go v1.53.0
+# github.com/aws/aws-lambda-go v1.54.0
 ## explicit; go 1.18
 github.com/aws/aws-lambda-go/events
 github.com/aws/aws-lambda-go/lambda
@@ -52,7 +52,7 @@ github.com/golang/geo/s2
 ## explicit; go 1.22
 github.com/sfomuseum/go-flags/flagset
 github.com/sfomuseum/go-flags/multi
-# golang.org/x/net v0.51.0
+# golang.org/x/net v0.56.0
 ## explicit; go 1.25.0
 golang.org/x/net/context
 # gopkg.in/yaml.v2 v2.4.0
